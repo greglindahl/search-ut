@@ -211,6 +211,12 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                 Galleries
               </TabsTrigger>
               <TabsTrigger
+                value="folders"
+                className="bg-transparent px-0 pb-3 rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              >
+                Folders
+              </TabsTrigger>
+              <TabsTrigger
                 value="saved"
                 className="bg-transparent px-0 pb-3 rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none"
               >
@@ -228,6 +234,12 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
           <TabsContent value="galleries" className="flex-1 py-6 mt-0">
             <div className="border-2 border-dashed border-border rounded-lg p-8 text-center text-muted-foreground">
               <p>Galleries content placeholder</p>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="folders" className="flex-1 py-6 mt-0">
+            <div className="border-2 border-dashed border-border rounded-lg p-8 text-center text-muted-foreground">
+              <p>Folders content placeholder</p>
             </div>
           </TabsContent>
 
