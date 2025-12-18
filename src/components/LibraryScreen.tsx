@@ -388,12 +388,142 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
           </TabsContent>
 
           <TabsContent value="galleries" className="flex-1 py-6 mt-0">
+            {/* Faceted Search */}
+            <div className="mb-4">
+              <FacetedSearch />
+            </div>
+
+            {/* Filters and Controls */}
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <div className="flex flex-wrap items-center gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      Creator
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>All Creators</DropdownMenuItem>
+                    <DropdownMenuItem>Creator 1</DropdownMenuItem>
+                    <DropdownMenuItem>Creator 2</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      Date Range
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>All Time</DropdownMenuItem>
+                    <DropdownMenuItem>Last 7 Days</DropdownMenuItem>
+                    <DropdownMenuItem>Last 30 Days</DropdownMenuItem>
+                    <DropdownMenuItem>Last Year</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      Sort
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>Date (Newest)</DropdownMenuItem>
+                    <DropdownMenuItem>Date (Oldest)</DropdownMenuItem>
+                    <DropdownMenuItem>Name (A-Z)</DropdownMenuItem>
+                    <DropdownMenuItem>Name (Z-A)</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <div className="flex items-center border rounded-md">
+                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-r-none">
+                    <Grid3X3 className="w-4 h-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-l-none">
+                    <List className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+
             <div className="border-2 border-dashed border-border rounded-lg p-8 text-center text-muted-foreground">
               <p>Galleries content placeholder</p>
             </div>
           </TabsContent>
 
           <TabsContent value="folders" className="flex-1 py-6 mt-0">
+            {/* Faceted Search */}
+            <div className="mb-4">
+              <FacetedSearch />
+            </div>
+
+            {/* Filters and Controls */}
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <div className="flex flex-wrap items-center gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      Creator
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>All Creators</DropdownMenuItem>
+                    <DropdownMenuItem>Creator 1</DropdownMenuItem>
+                    <DropdownMenuItem>Creator 2</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      Date Range
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>All Time</DropdownMenuItem>
+                    <DropdownMenuItem>Last 7 Days</DropdownMenuItem>
+                    <DropdownMenuItem>Last 30 Days</DropdownMenuItem>
+                    <DropdownMenuItem>Last Year</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      Sort
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>Date (Newest)</DropdownMenuItem>
+                    <DropdownMenuItem>Date (Oldest)</DropdownMenuItem>
+                    <DropdownMenuItem>Name (A-Z)</DropdownMenuItem>
+                    <DropdownMenuItem>Name (Z-A)</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <div className="flex items-center border rounded-md">
+                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-r-none">
+                    <Grid3X3 className="w-4 h-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-l-none">
+                    <List className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+
             <div className="border-2 border-dashed border-border rounded-lg p-8 text-center text-muted-foreground">
               <p>Folders content placeholder</p>
             </div>
