@@ -166,17 +166,18 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
 
   return (
     <div className="flex-1 flex">
-      {/* Folders Sidebar - Only show when Folders tab is active */}
-      {showFolderSidebar && (
-        <div
-          className={`border-r bg-card flex flex-col transition-all duration-200 ${
-            isFolderSidebarExpanded ? "w-64" : "w-12"
-          }`}
-        >
+      {/* Folders Sidebar - Animated show/hide based on tab */}
+      <div
+        className={`border-r bg-card flex flex-col transition-all duration-300 ease-in-out overflow-hidden ${
+          showFolderSidebar 
+            ? (isFolderSidebarExpanded ? "w-64 opacity-100" : "w-12 opacity-100") 
+            : "w-0 opacity-0 border-r-0"
+        }`}
+      >
         {isFolderSidebarExpanded ? (
           <>
             {/* Sidebar Header - Expanded */}
-            <div className="p-4 border-b flex items-center justify-between">
+            <div className="p-4 border-b flex items-center justify-between min-w-64">
               <span className="font-medium text-sm">Folders</span>
               <button
                 onClick={() => setIsFolderSidebarExpanded(false)}
@@ -188,13 +189,13 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
             </div>
 
             {/* Folder List */}
-            <div className="flex-1 p-2 overflow-y-auto">
+            <div className="flex-1 p-2 overflow-y-auto min-w-64">
               {folders.map((folder) => renderFolder(folder))}
             </div>
           </>
         ) : (
           /* Collapsed State - Icon only */
-          <div className="p-2 border-b flex flex-col items-center gap-1">
+          <div className="p-2 border-b flex flex-col items-center gap-1 min-w-12">
             <button
               className="p-2 hover:bg-accent rounded transition-colors"
               aria-label="Folders"
@@ -211,12 +212,15 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
           </div>
         )}
       </div>
-      )}
 
       {/* Main Content Area */}
       <div className={`flex-1 flex flex-col min-w-0 px-4 md:px-8 xl:px-16 pb-12 ${isMobile ? "pt-[58px]" : "pt-20"}`}>
-        {/* Breadcrumb - Only show when Folders tab is active */}
-        {showFolderSidebar && (
+        {/* Breadcrumb - Animated show/hide based on Folders tab */}
+        <div 
+          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+            showFolderSidebar ? "max-h-12 opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
           <div className="pt-4 flex items-center gap-2 text-sm text-muted-foreground">
             {!isFolderSidebarExpanded && (
               <button
@@ -229,7 +233,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
             )}
             <span>All Files</span>
           </div>
-        )}
+        </div>
 
         {/* Header with title and actions */}
         <div className="py-4 flex items-center justify-between">
