@@ -1,13 +1,34 @@
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, Folder, ChevronDown, Plus, Upload } from "lucide-react";
+import { ChevronLeft, ChevronRight, Folder, ChevronDown, Plus, Upload, Search, Grid3X3, List, CheckSquare, Image } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+interface Asset {
+  id: string;
+  name: string;
+  creator: string;
+  timeAgo: string;
+}
+
+const mockAssets: Asset[] = [
+  { id: "1", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "10 min ago" },
+  { id: "2", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "20 min ago" },
+  { id: "3", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "30 min ago" },
+  { id: "4", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "1 hour ago" },
+  { id: "5", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "1 hour ago" },
+  { id: "6", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "10 min ago" },
+  { id: "7", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "20 min ago" },
+  { id: "8", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "30 min ago" },
+  { id: "9", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "1 hour ago" },
+  { id: "10", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "1 hour ago" },
+];
 
 interface FolderItem {
   id: string;
@@ -233,8 +254,141 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
           </div>
 
           <TabsContent value="assets" className="flex-1 py-6 mt-0">
-            <div className="border-2 border-dashed border-border rounded-lg p-8 text-center text-muted-foreground">
-              <p>Assets content placeholder</p>
+            {/* Search Bar */}
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search content by team, player, or season..."
+                className="pl-10 w-full"
+              />
+            </div>
+
+            {/* Filters and Controls */}
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <div className="flex flex-wrap items-center gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      Creator
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>All Creators</DropdownMenuItem>
+                    <DropdownMenuItem>Creator 1</DropdownMenuItem>
+                    <DropdownMenuItem>Creator 2</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      Date Range
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>All Time</DropdownMenuItem>
+                    <DropdownMenuItem>Last 7 Days</DropdownMenuItem>
+                    <DropdownMenuItem>Last 30 Days</DropdownMenuItem>
+                    <DropdownMenuItem>Last Year</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      Content Type
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>All Types</DropdownMenuItem>
+                    <DropdownMenuItem>Images</DropdownMenuItem>
+                    <DropdownMenuItem>Videos</DropdownMenuItem>
+                    <DropdownMenuItem>Documents</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      Aspect Ratio
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>All Ratios</DropdownMenuItem>
+                    <DropdownMenuItem>1:1</DropdownMenuItem>
+                    <DropdownMenuItem>16:9</DropdownMenuItem>
+                    <DropdownMenuItem>4:3</DropdownMenuItem>
+                    <DropdownMenuItem>9:16</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      120 per Page
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>24 per Page</DropdownMenuItem>
+                    <DropdownMenuItem>48 per Page</DropdownMenuItem>
+                    <DropdownMenuItem>120 per Page</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      Sort
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>Date (Newest)</DropdownMenuItem>
+                    <DropdownMenuItem>Date (Oldest)</DropdownMenuItem>
+                    <DropdownMenuItem>Name (A-Z)</DropdownMenuItem>
+                    <DropdownMenuItem>Name (Z-A)</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <div className="flex items-center border rounded-md">
+                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-r-none">
+                    <Grid3X3 className="w-4 h-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-none border-x">
+                    <List className="w-4 h-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-l-none">
+                    <CheckSquare className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Assets Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {mockAssets.map((asset) => (
+                <div key={asset.id} className="group cursor-pointer">
+                  <div className="aspect-[4/3] border rounded-lg bg-muted/30 flex items-center justify-center mb-2 hover:border-primary/50 transition-colors">
+                    <Image className="w-8 h-8 text-muted-foreground/50" />
+                  </div>
+                  <div className="flex items-center gap-1.5 text-sm">
+                    <Image className="w-4 h-4 text-muted-foreground" />
+                    <span className="truncate">{asset.name}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground mt-0.5">
+                    <span>{asset.creator}</span>
+                    <span>{asset.timeAgo}</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </TabsContent>
 
