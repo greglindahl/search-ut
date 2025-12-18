@@ -1,7 +1,6 @@
 import { ArrowLeft, FileCode } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Screen } from "./LeftNav";
-import { FoldersScreen } from "./FoldersScreen";
 import { LibraryScreen } from "./LibraryScreen";
 import { EngageScreen } from "./EngageScreen";
 import { ConnectScreen } from "./ConnectScreen";
@@ -18,7 +17,6 @@ interface ContentScreenProps {
 }
 
 const screenTitles: Record<Screen, string> = {
-  folders: "Folders",
   home: "Home",
   library: "Library",
   engage: "Engage",
@@ -30,7 +28,6 @@ const screenTitles: Record<Screen, string> = {
 };
 
 const screenDescriptions: Record<Screen, string> = {
-  folders: "Organize your content into folders",
   home: "Dashboard overview and quick actions",
   library: "Your content library and media files",
   engage: "Customer engagement and conversations",
@@ -43,11 +40,6 @@ const screenDescriptions: Record<Screen, string> = {
 
 export function ContentScreen({ screen, history, onBack, isMobile = false }: ContentScreenProps) {
   const canGoBack = history.length > 1;
-
-  // Folders has its own dedicated screen
-  if (screen === "folders") {
-    return <FoldersScreen isMobile={isMobile} />;
-  }
 
   // Library has its own dedicated screen with secondary nav
   if (screen === "library") {

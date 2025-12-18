@@ -9,7 +9,6 @@ import { useState } from "react";
 import { OrgSwitcher, MobileOrgSwitcher } from "./OrgSwitcher";
 
 export type Screen =
-  | "folders"
   | "home"
   | "library"
   | "engage"
@@ -34,7 +33,6 @@ const mainNavItems: {
   icon: string;
   label: string;
 }[] = [
-  { id: "folders", icon: "bi-folder", label: "Folders" },
   { id: "home", icon: "bi-house", label: "Home" },
   { id: "library", icon: "bi-image", label: "Library" },
   { id: "connect", icon: "bi-plug", label: "Connect" },
