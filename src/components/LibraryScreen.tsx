@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, Folder, ChevronDown, Plus, Upload, Search, Grid3X3, List, CheckSquare, Image } from "lucide-react";
+import { ChevronLeft, ChevronRight, Folder, ChevronDown, Plus, Upload, Grid3X3, List, CheckSquare, Image } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { FacetedSearch } from "@/components/FacetedSearch";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -254,14 +254,9 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
           </div>
 
           <TabsContent value="assets" className="flex-1 py-6 mt-0">
-            {/* Search Bar */}
-            <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search content by team, player, or season..."
-                className="pl-10 w-full"
-              />
+            {/* Faceted Search */}
+            <div className="mb-4">
+              <FacetedSearch />
             </div>
 
             {/* Filters and Controls */}
