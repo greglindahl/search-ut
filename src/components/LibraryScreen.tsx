@@ -46,6 +46,28 @@ const mockGalleries: Gallery[] = [
   { id: "6", name: "Gallery 6", assetCount: 12, timeAgo: "1 month ago" },
 ];
 
+interface FolderCard {
+  id: string;
+  name: string;
+  galleryCount: number;
+  timeAgo: string;
+}
+
+const mockFolderCards: FolderCard[] = [
+  { id: "1", name: "Folder 1", galleryCount: 20, timeAgo: "1 day ago" },
+  { id: "2", name: "Folder 2", galleryCount: 8, timeAgo: "3 days ago" },
+  { id: "3", name: "Folder 3", galleryCount: 6, timeAgo: "1 week ago" },
+  { id: "4", name: "Folder 4", galleryCount: 17, timeAgo: "2 weeks ago" },
+  { id: "5", name: "Folder 5", galleryCount: 20, timeAgo: "1 day ago" },
+  { id: "6", name: "Folder 6", galleryCount: 19, timeAgo: "3 days ago" },
+  { id: "7", name: "Folder 7", galleryCount: 16, timeAgo: "1 week ago" },
+  { id: "8", name: "Folder 8", galleryCount: 5, timeAgo: "2 weeks ago" },
+  { id: "9", name: "Folder 9", galleryCount: 22, timeAgo: "1 day ago" },
+  { id: "10", name: "Folder 10", galleryCount: 18, timeAgo: "3 days ago" },
+  { id: "11", name: "Folder 11", galleryCount: 16, timeAgo: "1 week ago" },
+  { id: "12", name: "Folder 12", galleryCount: 14, timeAgo: "2 weeks ago" },
+];
+
 interface FolderItem {
   id: string;
   name: string;
@@ -555,8 +577,23 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
               </div>
             </div>
 
-            <div className="border-2 border-dashed border-border rounded-lg p-8 text-center text-muted-foreground">
-              <p>Folders content placeholder</p>
+            {/* Folders Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {mockFolderCards.map((folder) => (
+                <div key={folder.id} className="group cursor-pointer border rounded-lg p-4 hover:border-primary/50 transition-colors">
+                  <div className="aspect-[4/3] border rounded-lg bg-muted/30 flex items-center justify-center mb-3">
+                    <Folder className="w-12 h-12 text-muted-foreground/70" />
+                  </div>
+                  <div className="flex items-center gap-1.5 text-sm font-medium mb-1">
+                    <Folder className="w-4 h-4 text-muted-foreground" />
+                    <span className="truncate">{folder.name}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>{folder.galleryCount} Galleries</span>
+                    <span>{folder.timeAgo}</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </TabsContent>
 
