@@ -145,8 +145,8 @@ export function FacetedSearch({ onSearch }: FacetedSearchProps) {
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg z-50 overflow-hidden">
-          <ScrollArea className="max-h-[400px]">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg z-50">
+          <ScrollArea className="h-[400px]">
             <div className="p-3">
               {/* Field Search Options */}
               <div className="space-y-1 mb-4">
