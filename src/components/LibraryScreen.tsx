@@ -44,6 +44,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
   const [isFolderSidebarExpanded, setIsFolderSidebarExpanded] = useState(true);
   const [activeFolder, setActiveFolder] = useState("all");
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
+  const [activeTab, setActiveTab] = useState("assets");
 
   const toggleFolderExpand = (folderId: string) => {
     setExpandedFolders((prev) => {
@@ -102,14 +103,17 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
     );
   };
 
+  const showFolderSidebar = activeTab === "folders";
+
   return (
     <div className="flex-1 flex">
-      {/* Folders Sidebar */}
-      <div
-        className={`border-r bg-card flex flex-col transition-all duration-200 ${
-          isFolderSidebarExpanded ? "w-64" : "w-12"
-        }`}
-      >
+      {/* Folders Sidebar - Only show when Folders tab is active */}
+      {showFolderSidebar && (
+        <div
+          className={`border-r bg-card flex flex-col transition-all duration-200 ${
+            isFolderSidebarExpanded ? "w-64" : "w-12"
+          }`}
+        >
         {isFolderSidebarExpanded ? (
           <>
             {/* Sidebar Header - Expanded */}
@@ -148,22 +152,25 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
           </div>
         )}
       </div>
+      )}
 
       {/* Main Content Area */}
       <div className={`flex-1 flex flex-col min-w-0 px-4 md:px-8 xl:px-16 pb-12 ${isMobile ? "pt-[58px]" : "pt-20"}`}>
-        {/* Breadcrumb */}
-        <div className="pt-4 flex items-center gap-2 text-sm text-muted-foreground">
-          {!isFolderSidebarExpanded && (
-            <button
-              onClick={() => setIsFolderSidebarExpanded(true)}
-              className="p-1 hover:bg-accent rounded transition-colors mr-2"
-              aria-label="Expand folders"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          )}
-          <span>All Files</span>
-        </div>
+        {/* Breadcrumb - Only show when Folders tab is active */}
+        {showFolderSidebar && (
+          <div className="pt-4 flex items-center gap-2 text-sm text-muted-foreground">
+            {!isFolderSidebarExpanded && (
+              <button
+                onClick={() => setIsFolderSidebarExpanded(true)}
+                className="p-1 hover:bg-accent rounded transition-colors mr-2"
+                aria-label="Expand folders"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            )}
+            <span>All Files</span>
+          </div>
+        )}
 
         {/* Header with title and actions */}
         <div className="py-4 flex items-center justify-between">
@@ -195,7 +202,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="assets" className="flex-1 flex flex-col">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
           <div className="border-b">
             <TabsList className="bg-transparent h-auto p-0 gap-6">
               <TabsTrigger
