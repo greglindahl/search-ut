@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, Folder, ChevronDown, Plus, Upload, Grid3X3, List, CheckSquare, Image } from "lucide-react";
+import { ChevronLeft, ChevronRight, Folder, ChevronDown, Plus, Upload, Grid3X3, List, CheckSquare, Image, Images } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { FacetedSearch } from "@/components/FacetedSearch";
@@ -28,6 +28,22 @@ const mockAssets: Asset[] = [
   { id: "8", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "30 min ago" },
   { id: "9", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "1 hour ago" },
   { id: "10", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "1 hour ago" },
+];
+
+interface Gallery {
+  id: string;
+  name: string;
+  assetCount: number;
+  timeAgo: string;
+}
+
+const mockGalleries: Gallery[] = [
+  { id: "1", name: "Gallery 1", assetCount: 29, timeAgo: "2 days ago" },
+  { id: "2", name: "Gallery 2", assetCount: 30, timeAgo: "5 days ago" },
+  { id: "3", name: "Gallery 3", assetCount: 53, timeAgo: "1 week ago" },
+  { id: "4", name: "Gallery 4", assetCount: 20, timeAgo: "2 weeks ago" },
+  { id: "5", name: "Gallery 5", assetCount: 45, timeAgo: "3 weeks ago" },
+  { id: "6", name: "Gallery 6", assetCount: 12, timeAgo: "1 month ago" },
 ];
 
 interface FolderItem {
@@ -453,8 +469,23 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
               </div>
             </div>
 
-            <div className="border-2 border-dashed border-border rounded-lg p-8 text-center text-muted-foreground">
-              <p>Galleries content placeholder</p>
+            {/* Galleries Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {mockGalleries.map((gallery) => (
+                <div key={gallery.id} className="group cursor-pointer border rounded-lg p-4 hover:border-primary/50 transition-colors">
+                  <div className="aspect-[4/3] border border-dashed rounded-lg bg-muted/30 flex items-center justify-center mb-3">
+                    <div className="w-3/4 h-3/4 bg-muted/50 rounded" />
+                  </div>
+                  <div className="flex items-center gap-1.5 text-sm font-medium mb-1">
+                    <Images className="w-4 h-4 text-muted-foreground" />
+                    <span className="truncate">{gallery.name}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>{gallery.assetCount} Assets</span>
+                    <span>{gallery.timeAgo}</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </TabsContent>
 
