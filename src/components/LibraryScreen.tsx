@@ -363,6 +363,20 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                     <DropdownMenuItem>9:16</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      People
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>All</DropdownMenuItem>
+                    <DropdownMenuItem>With People</DropdownMenuItem>
+                    <DropdownMenuItem>Without People</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
 
               <div className="flex items-center gap-2">
