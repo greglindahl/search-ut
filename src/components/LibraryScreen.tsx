@@ -215,25 +215,6 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
 
       {/* Main Content Area */}
       <div className={`flex-1 flex flex-col min-w-0 px-4 md:px-8 xl:px-16 pb-12 ${isMobile ? "pt-[58px]" : "pt-20"}`}>
-        {/* Breadcrumb - Animated show/hide based on Folders tab */}
-        <div 
-          className={`overflow-hidden transition-all duration-300 ease-in-out ${
-            showFolderSidebar ? "max-h-12 opacity-100" : "max-h-0 opacity-0"
-          }`}
-        >
-          <div className="pt-4 flex items-center gap-2 text-sm text-muted-foreground">
-            {!isFolderSidebarExpanded && (
-              <button
-                onClick={() => setIsFolderSidebarExpanded(true)}
-                className="p-1 hover:bg-accent rounded transition-colors mr-2"
-                aria-label="Expand folders"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            )}
-            <span>All Files</span>
-          </div>
-        </div>
 
         {/* Header with title and actions */}
         <div className="py-4 flex items-center justify-between">
