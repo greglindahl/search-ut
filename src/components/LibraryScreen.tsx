@@ -373,8 +373,10 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuItem>All</DropdownMenuItem>
-                    <DropdownMenuItem>With People</DropdownMenuItem>
-                    <DropdownMenuItem>Without People</DropdownMenuItem>
+                    <DropdownMenuItem>Person Name</DropdownMenuItem>
+                    <DropdownMenuItem>Person Name</DropdownMenuItem>
+                    <DropdownMenuItem>Person Name</DropdownMenuItem>
+                    <DropdownMenuItem>Person Name</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
