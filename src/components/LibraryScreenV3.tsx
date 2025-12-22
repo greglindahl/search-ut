@@ -118,7 +118,7 @@ export function LibraryScreenV3({ isMobile = false }: LibraryScreenV3Props) {
   const [activeTab, setActiveTab] = useState("assets");
   
   // Use the library search hook
-  const { results, isLoading, totalCount, search } = useLibrarySearch();
+  const { results, isLoading, totalCount, search, allAssets } = useLibrarySearch();
 
   const toggleFolderExpand = (folderId: string) => {
     setExpandedFolders((prev) => {
@@ -294,7 +294,7 @@ export function LibraryScreenV3({ isMobile = false }: LibraryScreenV3Props) {
           <TabsContent value="assets" className="flex-1 py-6 mt-0">
             {/* Faceted Pills Search */}
             <div className="mb-6">
-              <FacetedPillsSearch onSearch={search} />
+              <FacetedPillsSearch onSearch={search} assets={allAssets} />
             </div>
 
             {/* View Controls */}
