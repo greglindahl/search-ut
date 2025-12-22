@@ -50,35 +50,27 @@ const Index = () => {
 
   return (
     <div className="flex min-h-screen w-full">
-      {/* Top header bar - fixed */}
-      <div className="fixed top-0 left-0 right-0 h-14 z-50 flex items-center justify-between px-4 bg-background/95 backdrop-blur-sm border-b border-border/50">
-        {/* Breadcrumbs - left side */}
-        <div className="flex items-center gap-2 text-sm text-muted-foreground ml-16 md:ml-64">
-          <span className="hover:text-foreground cursor-pointer transition-colors">All Files</span>
-        </div>
+      {/* Top right icons - fixed */}
+      <div className="fixed top-4 right-4 z-50 flex items-center gap-4">
+        {/* Announcements */}
+        <button className="p-2 hover:bg-accent rounded-md transition-colors">
+          <i className="bi bi-megaphone text-topnav-icon hover:text-topnav-icon-hover text-lg" />
+        </button>
 
-        {/* Right side icons */}
-        <div className="flex items-center gap-4">
-          {/* Announcements */}
-          <button className="p-2 hover:bg-accent rounded-md transition-colors">
-            <i className="bi bi-megaphone text-topnav-icon hover:text-topnav-icon-hover text-lg" />
-          </button>
+        {/* Messages with badge */}
+        <button className="relative p-2 hover:bg-accent rounded-md transition-colors">
+          <i className="bi bi-envelope text-topnav-icon hover:text-topnav-icon-hover text-lg" />
+          <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs font-medium px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+            99+
+          </span>
+        </button>
 
-          {/* Messages with badge */}
-          <button className="relative p-2 hover:bg-accent rounded-md transition-colors">
-            <i className="bi bi-envelope text-topnav-icon hover:text-topnav-icon-hover text-lg" />
-            <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs font-medium px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
-              99+
-            </span>
-          </button>
-
-          {/* Profile avatar */}
-          <Avatar className="h-9 w-9 cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all">
-            <AvatarFallback className="bg-muted">
-              <User className="h-4 w-4 text-muted-foreground" />
-            </AvatarFallback>
-          </Avatar>
-        </div>
+        {/* Profile avatar */}
+        <Avatar className="h-9 w-9 cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all">
+          <AvatarFallback className="bg-muted">
+            <User className="h-4 w-4 text-muted-foreground" />
+          </AvatarFallback>
+        </Avatar>
       </div>
 
       {/* Mobile header */}
