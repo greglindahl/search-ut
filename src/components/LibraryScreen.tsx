@@ -121,15 +121,47 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState("assets");
   const [contentTypeFilter, setContentTypeFilter] = useState<"all" | "image" | "video">("all");
+  const [creatorFilter, setCreatorFilter] = useState<string>("all");
+  const [aspectRatioFilter, setAspectRatioFilter] = useState<string>("all");
+  const [peopleFilter, setPeopleFilter] = useState<string>("all");
   
   // Use the library search hook
   const { results, allAssets, isLoading, totalCount, search } = useLibrarySearch();
 
-  // Filter results by content type
+  // Get unique creators and people from all assets
+  const uniqueCreators = useMemo(() => {
+    const creators = new Set(allAssets.map(a => a.creator));
+    return Array.from(creators).sort();
+  }, [allAssets]);
+
+  // Extract people from tags (tags that look like names)
+  const uniquePeople = useMemo(() => {
+    const people = new Set<string>();
+    allAssets.forEach(asset => {
+      asset.tags.forEach(tag => {
+        // Consider tags with spaces as potential people names
+        if (tag.includes(" ") && !tag.includes("(") && !tag.toLowerCase().includes("shot")) {
+          people.add(tag);
+        }
+      });
+    });
+    return Array.from(people).sort();
+  }, [allAssets]);
+
+  // Filter results by all active filters
   const filteredResults = useMemo(() => {
-    if (contentTypeFilter === "all") return results;
-    return results.filter(asset => asset.type === contentTypeFilter);
-  }, [results, contentTypeFilter]);
+    return results.filter(asset => {
+      // Content type filter
+      if (contentTypeFilter !== "all" && asset.type !== contentTypeFilter) return false;
+      // Creator filter
+      if (creatorFilter !== "all" && asset.creator !== creatorFilter) return false;
+      // Aspect ratio filter
+      if (aspectRatioFilter !== "all" && asset.aspectRatio !== aspectRatioFilter) return false;
+      // People filter (check tags)
+      if (peopleFilter !== "all" && !asset.tags.some(t => t.toLowerCase() === peopleFilter.toLowerCase())) return false;
+      return true;
+    });
+  }, [results, contentTypeFilter, creatorFilter, aspectRatioFilter, peopleFilter]);
 
   // Compute dynamic filter counts based on current results
   const filterCounts = useMemo(() => computeFilterCounts(filteredResults), [filteredResults]);
@@ -328,15 +360,15 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="gap-2">
-                      Creator
+                      {creatorFilter === "all" ? "Creator" : creatorFilter}
                       <ChevronDown className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem>All Creators ({filterCounts.total})</DropdownMenuItem>
-                    {Object.entries(filterCounts.creators).slice(0, 5).map(([creator, count]) => (
-                      <DropdownMenuItem key={creator}>
-                        {creator} ({count})
+                    <DropdownMenuItem onClick={() => setCreatorFilter("all")}>All Creators</DropdownMenuItem>
+                    {uniqueCreators.map((creator) => (
+                      <DropdownMenuItem key={creator} onClick={() => setCreatorFilter(creator)}>
+                        {creator}
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
@@ -350,7 +382,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem>All Time ({filterCounts.total})</DropdownMenuItem>
+                    <DropdownMenuItem>All Time</DropdownMenuItem>
                     <DropdownMenuItem>Last 7 Days</DropdownMenuItem>
                     <DropdownMenuItem>Last 30 Days</DropdownMenuItem>
                     <DropdownMenuItem>Last Year</DropdownMenuItem>
@@ -374,32 +406,37 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="gap-2">
-                      Aspect Ratio
+                      {aspectRatioFilter === "all" ? "Aspect Ratio" : aspectRatioFilter}
                       <ChevronDown className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem>All Ratios ({filterCounts.total})</DropdownMenuItem>
-                    <DropdownMenuItem>1:1 ({filterCounts.aspectRatios["1:1"]})</DropdownMenuItem>
-                    <DropdownMenuItem>16:9 ({filterCounts.aspectRatios["16:9"]})</DropdownMenuItem>
-                    <DropdownMenuItem>4:3 ({filterCounts.aspectRatios["4:3"]})</DropdownMenuItem>
-                    <DropdownMenuItem>9:16 ({filterCounts.aspectRatios["9:16"]})</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setAspectRatioFilter("all")}>All Ratios</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setAspectRatioFilter("1:1")}>1:1</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setAspectRatioFilter("16:9")}>16:9</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setAspectRatioFilter("4:3")}>4:3</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setAspectRatioFilter("9:16")}>9:16</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="gap-2">
-                      People
+                      {peopleFilter === "all" ? "People" : peopleFilter}
                       <ChevronDown className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem>All</DropdownMenuItem>
-                    <DropdownMenuItem>Person Name</DropdownMenuItem>
-                    <DropdownMenuItem>Person Name</DropdownMenuItem>
-                    <DropdownMenuItem>Person Name</DropdownMenuItem>
-                    <DropdownMenuItem>Person Name</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPeopleFilter("all")}>All</DropdownMenuItem>
+                    {uniquePeople.length > 0 ? (
+                      uniquePeople.map((person) => (
+                        <DropdownMenuItem key={person} onClick={() => setPeopleFilter(person)}>
+                          {person}
+                        </DropdownMenuItem>
+                      ))
+                    ) : (
+                      <DropdownMenuItem disabled>No people tagged</DropdownMenuItem>
+                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
