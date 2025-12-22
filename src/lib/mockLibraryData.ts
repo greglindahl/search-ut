@@ -65,80 +65,105 @@ const assetNames = {
   ],
 };
 
+// Tags that match facets from both FacetedSearch (V1) and FacetedPillsSearch (V3)
 const tagSets = [
-  ["marketing", "social"],
-  ["product", "brand"],
-  ["social", "brand"],
-  ["marketing", "product"],
-  ["brand"],
-  ["marketing"],
-  ["product"],
-  ["social"],
-  ["marketing", "brand", "product"],
-  ["social", "product"],
+  // Sports tags (matching FacetedSearch facets)
+  ["football", "team shot (5+)", "candid"],
+  ["basketball", "small group (2-4)", "looking at camera"],
+  ["baseball", "solo (1)", "headshot"],
+  ["esports", "small group (2-4)", "candid"],
+  ["football", "crowd/fans", "landscape"],
+  ["basketball", "team shot (5+)", "portrait"],
+  ["football", "solo (1)", "looking at camera"],
+  ["baseball", "team shot (5+)", "candid"],
+  // Mixed tags (matching FacetedPillsSearch facets)
+  ["marketing", "social", "football"],
+  ["product", "brand", "basketball"],
+  ["social", "brand", "baseball"],
+  ["marketing", "product", "esports"],
+  ["brand", "football"],
+  ["marketing", "basketball"],
+  ["product", "football"],
+  ["social", "baseball"],
+  ["marketing", "brand", "product", "football"],
+  ["social", "product", "basketball"],
 ];
 
+// Helper functions for random generation (used only as fallback)
 function randomFromArray<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function randomDate(daysAgo: number): Date {
-  const date = new Date();
-  date.setDate(date.getDate() - Math.floor(Math.random() * daysAgo));
-  date.setHours(Math.floor(Math.random() * 24));
-  date.setMinutes(Math.floor(Math.random() * 60));
-  return date;
-}
-
-function generateAsset(id: number): LibraryAsset {
-  const type = randomFromArray(["image", "video", "document", "audio"] as const);
-  const names = assetNames[type];
-  const creator = randomFromArray(creators);
-  const aspectRatio = randomFromArray(["1:1", "16:9", "9:16", "4:3"] as const);
-  const status = randomFromArray(["approved", "pending", "draft"] as const);
-  const tags = randomFromArray(tagSets);
+// Generate 80 mock assets with good distribution of tags
+export const mockLibraryAssets: LibraryAsset[] = (() => {
+  // Use a simple seeded random for consistent results
+  let seed = 12345;
+  const seededRandom = () => {
+    seed = (seed * 16807) % 2147483647;
+    return (seed - 1) / 2147483646;
+  };
   
-  const fileSizes = {
-    image: ["1.2 MB", "2.4 MB", "856 KB", "3.1 MB", "1.8 MB"],
-    video: ["45 MB", "120 MB", "28 MB", "250 MB", "85 MB"],
-    document: ["2.1 MB", "5.4 MB", "890 KB", "1.5 MB"],
-    audio: ["8 MB", "15 MB", "4.2 MB", "22 MB"],
+  const seededFromArray = <T,>(arr: T[]): T => {
+    return arr[Math.floor(seededRandom() * arr.length)];
   };
-
-  const dimensions = {
-    "1:1": ["1080x1080", "2048x2048", "512x512"],
-    "16:9": ["1920x1080", "3840x2160", "1280x720"],
-    "9:16": ["1080x1920", "720x1280"],
-    "4:3": ["1600x1200", "2048x1536", "1024x768"],
+  
+  const seededDate = (daysAgo: number): Date => {
+    const date = new Date();
+    date.setDate(date.getDate() - Math.floor(seededRandom() * daysAgo));
+    date.setHours(Math.floor(seededRandom() * 24));
+    date.setMinutes(Math.floor(seededRandom() * 60));
+    return date;
   };
+  
+  const generateSeededAsset = (id: number): LibraryAsset => {
+    const type = seededFromArray(["image", "video", "document", "audio"] as const);
+    const names = assetNames[type];
+    const creator = seededFromArray(creators);
+    const aspectRatio = seededFromArray(["1:1", "16:9", "9:16", "4:3"] as const);
+    const status = seededFromArray(["approved", "pending", "draft"] as const);
+    const tags = seededFromArray(tagSets);
+    
+    const fileSizes = {
+      image: ["1.2 MB", "2.4 MB", "856 KB", "3.1 MB", "1.8 MB"],
+      video: ["45 MB", "120 MB", "28 MB", "250 MB", "85 MB"],
+      document: ["2.1 MB", "5.4 MB", "890 KB", "1.5 MB"],
+      audio: ["8 MB", "15 MB", "4.2 MB", "22 MB"],
+    };
 
-  const durations = ["0:15", "0:30", "1:00", "2:30", "5:00", "10:15"];
+    const dimensions = {
+      "1:1": ["1080x1080", "2048x2048", "512x512"],
+      "16:9": ["1920x1080", "3840x2160", "1280x720"],
+      "9:16": ["1080x1920", "720x1280"],
+      "4:3": ["1600x1200", "2048x1536", "1024x768"],
+    };
 
-  const extension = {
-    image: randomFromArray([".png", ".jpg", ".webp"]),
-    video: randomFromArray([".mp4", ".mov"]),
-    document: randomFromArray([".pdf", ".pptx"]),
-    audio: randomFromArray([".mp3", ".wav"]),
+    const durations = ["0:15", "0:30", "1:00", "2:30", "5:00", "10:15"];
+
+    const extension = {
+      image: seededFromArray([".png", ".jpg", ".webp"]),
+      video: seededFromArray([".mp4", ".mov"]),
+      document: seededFromArray([".pdf", ".pptx"]),
+      audio: seededFromArray([".mp3", ".wav"]),
+    };
+
+    return {
+      id: `asset-${id}`,
+      name: `${seededFromArray(names)}${extension[type]}`,
+      creator: creator.name,
+      creatorId: creator.id,
+      type,
+      dateCreated: seededDate(365),
+      aspectRatio,
+      status,
+      tags,
+      fileSize: seededFromArray(fileSizes[type]),
+      dimensions: type === "image" || type === "video" ? seededFromArray(dimensions[aspectRatio]) : undefined,
+      duration: type === "video" || type === "audio" ? seededFromArray(durations) : undefined,
+    };
   };
-
-  return {
-    id: `asset-${id}`,
-    name: `${randomFromArray(names)}${extension[type]}`,
-    creator: creator.name,
-    creatorId: creator.id,
-    type,
-    dateCreated: randomDate(365),
-    aspectRatio,
-    status,
-    tags,
-    fileSize: randomFromArray(fileSizes[type]),
-    dimensions: type === "image" || type === "video" ? randomFromArray(dimensions[aspectRatio]) : undefined,
-    duration: type === "video" || type === "audio" ? randomFromArray(durations) : undefined,
-  };
-}
-
-// Generate 80 mock assets
-export const mockLibraryAssets: LibraryAsset[] = Array.from({ length: 80 }, (_, i) => generateAsset(i + 1));
+  
+  return Array.from({ length: 80 }, (_, i) => generateSeededAsset(i + 1));
+})();
 
 // Helper to get relative time string
 export function getRelativeTime(date: Date): string {
@@ -224,9 +249,10 @@ export function searchAssets(assets: LibraryAsset[], filters: SearchFilters): Li
       if (!filters.status.includes(asset.status)) return false;
     }
 
-    // Tag filter
+    // Tag filter (case-insensitive)
     if (filters.tag?.length) {
-      if (!filters.tag.some((t) => asset.tags.includes(t))) return false;
+      const lowerTags = asset.tags.map(t => t.toLowerCase());
+      if (!filters.tag.some((t) => lowerTags.includes(t.toLowerCase()))) return false;
     }
 
     return true;
