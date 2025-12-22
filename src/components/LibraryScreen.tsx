@@ -322,7 +322,6 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="gap-2">
                       Creator
-                      <span className="text-xs text-muted-foreground">({Object.keys(filterCounts.creators).length})</span>
                       <ChevronDown className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -355,7 +354,6 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="gap-2">
                       Content Type
-                      <span className="text-xs text-muted-foreground">({filterCounts.total})</span>
                       <ChevronDown className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -372,7 +370,6 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="gap-2">
                       Aspect Ratio
-                      <span className="text-xs text-muted-foreground">({filterCounts.total})</span>
                       <ChevronDown className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
