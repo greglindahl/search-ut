@@ -1,8 +1,11 @@
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, Folder, ChevronDown, Plus, Upload, Grid3X3, List, CheckSquare, Image, Images } from "lucide-react";
+import { ChevronLeft, ChevronRight, Folder, ChevronDown, Plus, Upload, Grid3X3, List, CheckSquare, Image, Images, FileText, Music, Video, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { FacetedPillsSearch } from "@/components/FacetedPillsSearch";
+import { useLibrarySearch } from "@/hooks/useLibrarySearch";
+import { getRelativeTime, LibraryAsset } from "@/lib/mockLibraryData";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,25 +13,34 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface Asset {
-  id: string;
-  name: string;
-  creator: string;
-  timeAgo: string;
+// Icon component for asset types
+function AssetTypeIcon({ type, className }: { type: LibraryAsset["type"]; className?: string }) {
+  switch (type) {
+    case "video":
+      return <Video className={className} />;
+    case "document":
+      return <FileText className={className} />;
+    case "audio":
+      return <Music className={className} />;
+    default:
+      return <Image className={className} />;
+  }
 }
 
-const mockAssets: Asset[] = [
-  { id: "1", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "10 min ago" },
-  { id: "2", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "20 min ago" },
-  { id: "3", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "30 min ago" },
-  { id: "4", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "1 hour ago" },
-  { id: "5", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "1 hour ago" },
-  { id: "6", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "10 min ago" },
-  { id: "7", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "20 min ago" },
-  { id: "8", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "30 min ago" },
-  { id: "9", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "1 hour ago" },
-  { id: "10", name: "[Asset Name].png", creator: "[Creator]", timeAgo: "1 hour ago" },
-];
+// Status badge component
+function StatusBadge({ status }: { status: LibraryAsset["status"] }) {
+  const styles = {
+    approved: "bg-green-500/10 text-green-600 dark:text-green-400",
+    pending: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
+    draft: "bg-muted text-muted-foreground",
+  };
+
+  return (
+    <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${styles[status]}`}>
+      {status.charAt(0).toUpperCase() + status.slice(1)}
+    </span>
+  );
+}
 
 interface Gallery {
   id: string;
@@ -104,6 +116,9 @@ export function LibraryScreenV3({ isMobile = false }: LibraryScreenV3Props) {
   const [activeFolder, setActiveFolder] = useState("all");
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState("assets");
+  
+  // Use the library search hook
+  const { results, isLoading, totalCount, search } = useLibrarySearch();
 
   const toggleFolderExpand = (folderId: string) => {
     setExpandedFolders((prev) => {
@@ -279,71 +294,111 @@ export function LibraryScreenV3({ isMobile = false }: LibraryScreenV3Props) {
           <TabsContent value="assets" className="flex-1 py-6 mt-0">
             {/* Faceted Pills Search */}
             <div className="mb-6">
-              <FacetedPillsSearch />
+              <FacetedPillsSearch onSearch={search} />
             </div>
 
             {/* View Controls */}
-            <div className="flex items-center justify-end gap-2 mb-6">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    120 per Page
-                    <ChevronDown className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>24 per Page</DropdownMenuItem>
-                  <DropdownMenuItem>48 per Page</DropdownMenuItem>
-                  <DropdownMenuItem>120 per Page</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+            <div className="flex items-center justify-between gap-2 mb-6">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                {isLoading ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Searching...
+                  </span>
+                ) : (
+                  <span>{totalCount} asset{totalCount !== 1 ? "s" : ""}</span>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      120 per Page
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>24 per Page</DropdownMenuItem>
+                    <DropdownMenuItem>48 per Page</DropdownMenuItem>
+                    <DropdownMenuItem>120 per Page</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    Sort
-                    <ChevronDown className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>Date (Newest)</DropdownMenuItem>
-                  <DropdownMenuItem>Date (Oldest)</DropdownMenuItem>
-                  <DropdownMenuItem>Name (A-Z)</DropdownMenuItem>
-                  <DropdownMenuItem>Name (Z-A)</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      Sort
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>Date (Newest)</DropdownMenuItem>
+                    <DropdownMenuItem>Date (Oldest)</DropdownMenuItem>
+                    <DropdownMenuItem>Name (A-Z)</DropdownMenuItem>
+                    <DropdownMenuItem>Name (Z-A)</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
 
-              <div className="flex items-center border rounded-md">
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-r-none">
-                  <Grid3X3 className="w-4 h-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-none border-x">
-                  <List className="w-4 h-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-l-none">
-                  <CheckSquare className="w-4 h-4" />
-                </Button>
+                <div className="flex items-center border rounded-md">
+                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-r-none">
+                    <Grid3X3 className="w-4 h-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-none border-x">
+                    <List className="w-4 h-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-l-none">
+                    <CheckSquare className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
             </div>
 
-            {/* Assets Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {mockAssets.map((asset) => (
-                <div key={asset.id} className="group cursor-pointer">
-                  <div className="aspect-[4/3] border rounded-lg bg-muted/30 flex items-center justify-center mb-2 hover:border-primary/50 transition-colors">
-                    <Image className="w-8 h-8 text-muted-foreground/50" />
+            {/* Assets Grid with Loading State */}
+            {isLoading ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <div key={i} className="group">
+                    <Skeleton className="aspect-[4/3] rounded-lg mb-2" />
+                    <Skeleton className="h-4 w-3/4 mb-1" />
+                    <Skeleton className="h-3 w-1/2" />
                   </div>
-                  <div className="flex items-center gap-1.5 text-sm">
-                    <Image className="w-4 h-4 text-muted-foreground" />
-                    <span className="truncate">{asset.name}</span>
+                ))}
+              </div>
+            ) : results.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <Image className="w-12 h-12 text-muted-foreground/30 mb-4" />
+                <h3 className="text-lg font-medium mb-1">No assets found</h3>
+                <p className="text-sm text-muted-foreground">Try adjusting your filters or search terms</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {results.map((asset) => (
+                  <div key={asset.id} className="group cursor-pointer">
+                    <div className="aspect-[4/3] border rounded-lg bg-muted/30 flex flex-col items-center justify-center mb-2 hover:border-primary/50 transition-colors relative overflow-hidden">
+                      <AssetTypeIcon type={asset.type} className="w-8 h-8 text-muted-foreground/50" />
+                      {asset.dimensions && (
+                        <span className="text-[10px] text-muted-foreground/50 mt-1">{asset.dimensions}</span>
+                      )}
+                      {asset.duration && (
+                        <span className="absolute bottom-2 right-2 text-[10px] bg-background/80 px-1 rounded">{asset.duration}</span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1.5 text-sm">
+                      <AssetTypeIcon type={asset.type} className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                      <span className="truncate">{asset.name}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground mt-0.5">
+                      <span className="truncate">{asset.creator}</span>
+                      <span className="flex-shrink-0">{getRelativeTime(asset.dateCreated)}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <StatusBadge status={asset.status} />
+                      <span className="text-[10px] text-muted-foreground">{asset.fileSize}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground mt-0.5">
-                    <span>{asset.creator}</span>
-                    <span>{asset.timeAgo}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="galleries" className="flex-1 py-6 mt-0">
