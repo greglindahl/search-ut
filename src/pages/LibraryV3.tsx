@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { LeftNav, Screen } from "@/components/LeftNav";
-import { LibraryScreen } from "@/components/LibraryScreen";
+import { LibraryScreenV3 } from "@/components/LibraryScreenV3";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Menu, User } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -103,7 +103,7 @@ const LibraryV3 = () => {
         isMobileOpen={isMobileNavOpen}
         onCloseMobile={handleCloseMobileNav}
       />
-      <LibraryScreen isMobile={isMobile} />
+      <LibraryScreenV3 isMobile={isMobile} />
     </div>
   );
 };
