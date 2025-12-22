@@ -284,17 +284,7 @@ export function LibraryScreenV3({ isMobile = false }: LibraryScreenV3Props) {
             </div>
 
             {/* View Controls */}
-            <div className="flex items-center justify-between gap-2 mb-6">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                {isLoading ? (
-                  <span className="flex items-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Searching...
-                  </span>
-                ) : (
-                  <span>{totalCount} asset{totalCount !== 1 ? "s" : ""}</span>
-                )}
-              </div>
+            <div className="flex items-center justify-end gap-2 mb-6">
               <div className="flex items-center gap-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
