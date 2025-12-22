@@ -118,7 +118,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
   const [activeTab, setActiveTab] = useState("assets");
   
   // Use the library search hook
-  const { results, isLoading, totalCount, search } = useLibrarySearch();
+  const { results, allAssets, isLoading, totalCount, search } = useLibrarySearch();
 
   // Handle search from FacetedSearch component
   const handleSearch = useCallback((query: string, selectedFacets: string[]) => {
@@ -305,7 +305,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
           <TabsContent value="assets" className="flex-1 py-6 mt-0">
             {/* Faceted Search */}
             <div className="mb-4">
-              <FacetedSearch onSearch={handleSearch} />
+              <FacetedSearch onSearch={handleSearch} assets={allAssets} />
             </div>
 
             {/* Filters and Controls */}

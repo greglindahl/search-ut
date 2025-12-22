@@ -9,6 +9,7 @@ interface Facet {
 
 interface UseLibrarySearchResult {
   results: LibraryAsset[];
+  allAssets: LibraryAsset[];
   isLoading: boolean;
   totalCount: number;
   search: (query: string, facets: Facet[]) => void;
@@ -82,5 +83,5 @@ export function useLibrarySearch(): UseLibrarySearchResult {
     }, delay);
   }, []);
 
-  return { results, isLoading, totalCount, search };
+  return { results, allAssets: mockLibraryAssets, isLoading, totalCount, search };
 }

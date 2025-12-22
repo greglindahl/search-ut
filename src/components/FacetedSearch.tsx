@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { LibraryAsset } from "@/lib/mockLibraryData";
 
 interface FacetGroup {
   label: string;
@@ -54,9 +55,23 @@ const facetGroups: FacetGroup[] = [
 
 interface FacetedSearchProps {
   onSearch?: (query: string, selectedFacets: string[], fieldSearch?: { field: string; value: string }) => void;
+  assets?: LibraryAsset[];
 }
 
-export function FacetedSearch({ onSearch }: FacetedSearchProps) {
+// Helper to count assets matching a facet
+function countAssetsForFacet(assets: LibraryAsset[], facet: string): number {
+  const lowerFacet = facet.toLowerCase();
+  return assets.filter(asset => 
+    asset.tags.some(tag => tag.toLowerCase() === lowerFacet) ||
+    asset.type.toLowerCase() === lowerFacet ||
+    (facet.toLowerCase() === "photo" && asset.type === "image") ||
+    (facet.toLowerCase() === "video" && asset.type === "video") ||
+    (facet.toLowerCase() === "audio" && asset.type === "audio") ||
+    (facet.toLowerCase() === "document" && asset.type === "document")
+  ).length;
+}
+
+export function FacetedSearch({ onSearch, assets = [] }: FacetedSearchProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFacets, setSelectedFacets] = useState<string[]>([]);
@@ -80,6 +95,17 @@ export function FacetedSearch({ onSearch }: FacetedSearchProps) {
   useEffect(() => {
     onSearch?.(searchQuery, selectedFacets);
   }, [searchQuery, selectedFacets, onSearch]);
+
+  // Compute facet counts based on current assets
+  const facetCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    facetGroups.forEach(group => {
+      group.facets.forEach(facet => {
+        counts[facet] = countAssetsForFacet(assets, facet);
+      });
+    });
+    return counts;
+  }, [assets]);
 
   const handleFacetToggle = (facet: string) => {
     setSelectedFacets((prev) =>
@@ -174,16 +200,22 @@ export function FacetedSearch({ onSearch }: FacetedSearchProps) {
                     {group.label}
                   </h4>
                   <div className="flex flex-wrap gap-1.5">
-                    {group.facets.map((facet) => (
-                      <Badge
-                        key={facet}
-                        variant={selectedFacets.includes(facet) ? "default" : "outline"}
-                        className="cursor-pointer hover:bg-accent transition-colors text-xs"
-                        onClick={() => handleFacetToggle(facet)}
-                      >
-                        {facet}
-                      </Badge>
-                    ))}
+                    {group.facets.map((facet) => {
+                      const count = facetCounts[facet] || 0;
+                      return (
+                        <Badge
+                          key={facet}
+                          variant={selectedFacets.includes(facet) ? "default" : "outline"}
+                          className={`cursor-pointer hover:bg-accent transition-colors text-xs ${count === 0 ? "opacity-50" : ""}`}
+                          onClick={() => handleFacetToggle(facet)}
+                        >
+                          {facet}
+                          {assets.length > 0 && (
+                            <span className="ml-1 text-[10px] opacity-70">({count})</span>
+                          )}
+                        </Badge>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
