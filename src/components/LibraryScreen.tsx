@@ -439,6 +439,22 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                     )}
                   </DropdownMenuContent>
                 </DropdownMenu>
+
+                {(contentTypeFilter !== "all" || creatorFilter !== "all" || aspectRatioFilter !== "all" || peopleFilter !== "all") && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setContentTypeFilter("all");
+                      setCreatorFilter("all");
+                      setAspectRatioFilter("all");
+                      setPeopleFilter("all");
+                    }}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    Clear All
+                  </Button>
+                )}
               </div>
 
               <div className="flex items-center gap-2">
