@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { LeftNav, Screen } from "@/components/LeftNav";
-import { LibraryScreen } from "@/components/LibraryScreen";
+import { LibraryScreenV2 } from "@/components/LibraryScreenV2";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Menu, User } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -28,10 +28,8 @@ const LibraryV2 = () => {
 
   const handleNavigate = useCallback((screen: Screen) => {
     if (screen === "library") {
-      // Stay on current variation
       return;
     }
-    // Navigate to main app for other screens
     navigate("/");
   }, [navigate]);
 
@@ -103,7 +101,7 @@ const LibraryV2 = () => {
         isMobileOpen={isMobileNavOpen}
         onCloseMobile={handleCloseMobileNav}
       />
-      <LibraryScreen isMobile={isMobile} />
+      <LibraryScreenV2 isMobile={isMobile} />
     </div>
   );
 };
