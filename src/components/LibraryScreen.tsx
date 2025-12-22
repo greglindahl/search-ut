@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Folder, ChevronDown, Plus, Upload, Grid3X3, List, CheckSquare, Image, Images, FileText, Music, Video, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { FacetedSearch } from "@/components/FacetedSearch";
+import { FacetedSearchWithDropdown } from "@/components/FacetedSearchWithDropdown";
 import { useLibrarySearch } from "@/hooks/useLibrarySearch";
 import { getRelativeTime, LibraryAsset } from "@/lib/mockLibraryData";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -291,7 +291,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
           <TabsContent value="assets" className="flex-1 py-6 mt-0">
             {/* Faceted Search */}
             <div className="mb-4">
-              <FacetedSearch onSearch={handleSearch} assets={allAssets} />
+              <FacetedSearchWithDropdown onSearch={handleSearch} assets={allAssets} />
             </div>
 
             {/* Filters and Controls */}
@@ -482,7 +482,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
           <TabsContent value="galleries" className="flex-1 py-6 mt-0">
             {/* Faceted Search */}
             <div className="mb-4">
-              <FacetedSearch />
+              <FacetedSearchWithDropdown />
             </div>
 
             {/* Filters and Controls */}
@@ -568,7 +568,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
           <TabsContent value="folders" className="flex-1 py-6 mt-0">
             {/* Faceted Search */}
             <div className="mb-4">
-              <FacetedSearch />
+              <FacetedSearchWithDropdown />
             </div>
 
             {/* Filters and Controls */}
