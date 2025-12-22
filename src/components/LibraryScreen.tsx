@@ -358,11 +358,9 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem>All Types ({filterCounts.total})</DropdownMenuItem>
-                    <DropdownMenuItem>Images ({filterCounts.contentTypes.image})</DropdownMenuItem>
-                    <DropdownMenuItem>Videos ({filterCounts.contentTypes.video})</DropdownMenuItem>
-                    <DropdownMenuItem>Documents ({filterCounts.contentTypes.document})</DropdownMenuItem>
-                    <DropdownMenuItem>Audio ({filterCounts.contentTypes.audio})</DropdownMenuItem>
+                    <DropdownMenuItem>All</DropdownMenuItem>
+                    <DropdownMenuItem>Images</DropdownMenuItem>
+                    <DropdownMenuItem>Videos</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
 
