@@ -50,6 +50,9 @@ const LibraryV2 = () => {
           <Link to="/library/v3">
             <span className="text-xs font-medium px-2 py-0.5 rounded hover:bg-accent transition-colors cursor-pointer">V3</span>
           </Link>
+          <Link to="/library/v4">
+            <span className="text-xs font-medium px-2 py-0.5 rounded hover:bg-accent transition-colors cursor-pointer">V4</span>
+          </Link>
         </div>
       </div>
 
