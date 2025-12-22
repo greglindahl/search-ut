@@ -76,6 +76,11 @@ export function FacetedSearch({ onSearch }: FacetedSearchProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Trigger search when query or facets change
+  useEffect(() => {
+    onSearch?.(searchQuery, selectedFacets);
+  }, [searchQuery, selectedFacets, onSearch]);
+
   const handleFacetToggle = (facet: string) => {
     setSelectedFacets((prev) =>
       prev.includes(facet) ? prev.filter((f) => f !== facet) : [...prev, facet]
