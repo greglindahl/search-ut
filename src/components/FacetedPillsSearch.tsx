@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { X, ChevronDown, Search } from "lucide-react";
+import { LibraryAsset } from "@/lib/mockLibraryData";
 
 interface Facet {
   field: string;
@@ -76,9 +77,59 @@ const facetOptions: FacetOption[] = [
 
 interface FacetedPillsSearchProps {
   onSearch?: (query: string, facets: Facet[]) => void;
+  assets?: LibraryAsset[];
 }
 
-export function FacetedPillsSearch({ onSearch }: FacetedPillsSearchProps) {
+// Helper to count assets matching a facet value
+function countAssetsForFacet(assets: LibraryAsset[], field: string, value: string): number {
+  return assets.filter((asset) => {
+    switch (field) {
+      case "creator":
+        return asset.creator.toLowerCase().includes(value.toLowerCase());
+      case "type":
+        return asset.type === value;
+      case "status":
+        return asset.status === value;
+      case "tag":
+        return asset.tags.some((t) => t.toLowerCase() === value.toLowerCase());
+      case "aspect":
+        return asset.aspectRatio === value;
+      case "date":
+        const now = new Date();
+        const assetDate = asset.dateCreated;
+        switch (value) {
+          case "today":
+            return assetDate.toDateString() === now.toDateString();
+          case "week":
+            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            return assetDate >= weekAgo;
+          case "month":
+            const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            return assetDate >= monthAgo;
+          case "year":
+            const yearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+            return assetDate >= yearAgo;
+          default:
+            return true;
+        }
+      default:
+        return false;
+    }
+  }).length;
+}
+
+export function FacetedPillsSearch({ onSearch, assets = [] }: FacetedPillsSearchProps) {
+  // Calculate counts for all facet values
+  const facetCounts = useMemo(() => {
+    const counts: Record<string, Record<string, number>> = {};
+    facetOptions.forEach((opt) => {
+      counts[opt.field] = {};
+      opt.values.forEach((val) => {
+        counts[opt.field][val.value] = countAssetsForFacet(assets, opt.field, val.value);
+      });
+    });
+    return counts;
+  }, [assets]);
   const [query, setQuery] = useState("");
   const [selectedFacets, setSelectedFacets] = useState<Facet[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -300,19 +351,23 @@ export function FacetedPillsSearch({ onSearch }: FacetedPillsSearchProps) {
                 {activeFieldOptions?.fieldLabel}
               </div>
               {filteredValues.length > 0 ? (
-                filteredValues.map((val, index) => (
-                  <button
-                    key={val.value}
-                    onClick={() => handleSelectValue(activeField, val.value, val.label)}
-                    className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors ${
-                      highlightedIndex === index
-                        ? "bg-accent text-accent-foreground"
-                        : "hover:bg-accent/50"
-                    }`}
-                  >
-                    {val.label}
-                  </button>
-                ))
+                filteredValues.map((val, index) => {
+                  const count = facetCounts[activeField]?.[val.value] ?? 0;
+                  return (
+                    <button
+                      key={val.value}
+                      onClick={() => handleSelectValue(activeField, val.value, val.label)}
+                      className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors ${
+                        highlightedIndex === index
+                          ? "bg-accent text-accent-foreground"
+                          : "hover:bg-accent/50"
+                      } ${count === 0 ? "opacity-50" : ""}`}
+                    >
+                      <span>{val.label}</span>
+                      <span className="text-xs text-muted-foreground">({count})</span>
+                    </button>
+                  );
+                })
               ) : (
                 <div className="px-3 py-2 text-sm text-muted-foreground">
                   No matching values
