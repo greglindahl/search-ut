@@ -1,8 +1,8 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { ChevronLeft, ChevronRight, Folder, ChevronDown, Plus, Upload, Grid3X3, List, CheckSquare, Image, Images, FileText, Music, Video, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { FacetedSearchWithDropdown } from "@/components/FacetedSearchWithDropdown";
+import { FacetedSearchWithTypeahead } from "@/components/FacetedSearchWithTypeahead";
 import { useLibrarySearch } from "@/hooks/useLibrarySearch";
 import { getRelativeTime, LibraryAsset } from "@/lib/mockLibraryData";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -93,6 +93,24 @@ const folders: FolderItem[] = [
   },
 ];
 
+// Helper to compute dynamic counts for filter dropdowns
+function computeFilterCounts(assets: LibraryAsset[]) {
+  const creators: Record<string, number> = {};
+  const contentTypes: Record<string, number> = { image: 0, video: 0, document: 0, audio: 0 };
+  const aspectRatios: Record<string, number> = { "1:1": 0, "16:9": 0, "4:3": 0, "9:16": 0 };
+
+  assets.forEach(asset => {
+    // Creator counts
+    creators[asset.creator] = (creators[asset.creator] || 0) + 1;
+    // Content type counts
+    contentTypes[asset.type] = (contentTypes[asset.type] || 0) + 1;
+    // Aspect ratio counts
+    aspectRatios[asset.aspectRatio] = (aspectRatios[asset.aspectRatio] || 0) + 1;
+  });
+
+  return { creators, contentTypes, aspectRatios, total: assets.length };
+}
+
 interface LibraryScreenProps {
   isMobile?: boolean;
 }
@@ -105,6 +123,9 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
   
   // Use the library search hook
   const { results, allAssets, isLoading, totalCount, search } = useLibrarySearch();
+
+  // Compute dynamic filter counts based on current results
+  const filterCounts = useMemo(() => computeFilterCounts(results), [results]);
 
   // Handle search from FacetedSearch component
   const handleSearch = useCallback((query: string, selectedFacets: string[]) => {
@@ -291,7 +312,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
           <TabsContent value="assets" className="flex-1 py-6 mt-0">
             {/* Faceted Search */}
             <div className="mb-4">
-              <FacetedSearchWithDropdown onSearch={handleSearch} assets={allAssets} />
+              <FacetedSearchWithTypeahead onSearch={handleSearch} assets={allAssets} />
             </div>
 
             {/* Filters and Controls */}
@@ -301,13 +322,17 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="gap-2">
                       Creator
+                      <span className="text-xs text-muted-foreground">({Object.keys(filterCounts.creators).length})</span>
                       <ChevronDown className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem>All Creators</DropdownMenuItem>
-                    <DropdownMenuItem>Creator 1</DropdownMenuItem>
-                    <DropdownMenuItem>Creator 2</DropdownMenuItem>
+                    <DropdownMenuItem>All Creators ({filterCounts.total})</DropdownMenuItem>
+                    {Object.entries(filterCounts.creators).slice(0, 5).map(([creator, count]) => (
+                      <DropdownMenuItem key={creator}>
+                        {creator} ({count})
+                      </DropdownMenuItem>
+                    ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
 
@@ -319,7 +344,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem>All Time</DropdownMenuItem>
+                    <DropdownMenuItem>All Time ({filterCounts.total})</DropdownMenuItem>
                     <DropdownMenuItem>Last 7 Days</DropdownMenuItem>
                     <DropdownMenuItem>Last 30 Days</DropdownMenuItem>
                     <DropdownMenuItem>Last Year</DropdownMenuItem>
@@ -330,14 +355,16 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="gap-2">
                       Content Type
+                      <span className="text-xs text-muted-foreground">({filterCounts.total})</span>
                       <ChevronDown className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem>All Types</DropdownMenuItem>
-                    <DropdownMenuItem>Images</DropdownMenuItem>
-                    <DropdownMenuItem>Videos</DropdownMenuItem>
-                    <DropdownMenuItem>Documents</DropdownMenuItem>
+                    <DropdownMenuItem>All Types ({filterCounts.total})</DropdownMenuItem>
+                    <DropdownMenuItem>Images ({filterCounts.contentTypes.image})</DropdownMenuItem>
+                    <DropdownMenuItem>Videos ({filterCounts.contentTypes.video})</DropdownMenuItem>
+                    <DropdownMenuItem>Documents ({filterCounts.contentTypes.document})</DropdownMenuItem>
+                    <DropdownMenuItem>Audio ({filterCounts.contentTypes.audio})</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
 
@@ -345,15 +372,16 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="gap-2">
                       Aspect Ratio
+                      <span className="text-xs text-muted-foreground">({filterCounts.total})</span>
                       <ChevronDown className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem>All Ratios</DropdownMenuItem>
-                    <DropdownMenuItem>1:1</DropdownMenuItem>
-                    <DropdownMenuItem>16:9</DropdownMenuItem>
-                    <DropdownMenuItem>4:3</DropdownMenuItem>
-                    <DropdownMenuItem>9:16</DropdownMenuItem>
+                    <DropdownMenuItem>All Ratios ({filterCounts.total})</DropdownMenuItem>
+                    <DropdownMenuItem>1:1 ({filterCounts.aspectRatios["1:1"]})</DropdownMenuItem>
+                    <DropdownMenuItem>16:9 ({filterCounts.aspectRatios["16:9"]})</DropdownMenuItem>
+                    <DropdownMenuItem>4:3 ({filterCounts.aspectRatios["4:3"]})</DropdownMenuItem>
+                    <DropdownMenuItem>9:16 ({filterCounts.aspectRatios["9:16"]})</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
 
@@ -469,7 +497,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
           <TabsContent value="galleries" className="flex-1 py-6 mt-0">
             {/* Faceted Search */}
             <div className="mb-4">
-              <FacetedSearchWithDropdown />
+              <FacetedSearchWithTypeahead />
             </div>
 
             {/* Filters and Controls */}
@@ -555,7 +583,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
           <TabsContent value="folders" className="flex-1 py-6 mt-0">
             {/* Faceted Search */}
             <div className="mb-4">
-              <FacetedSearchWithDropdown />
+              <FacetedSearchWithTypeahead />
             </div>
 
             {/* Filters and Controls */}
