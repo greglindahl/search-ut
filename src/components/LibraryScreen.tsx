@@ -27,20 +27,6 @@ function AssetTypeIcon({ type, className }: { type: LibraryAsset["type"]; classN
   }
 }
 
-// Status badge component
-function StatusBadge({ status }: { status: LibraryAsset["status"] }) {
-  const styles = {
-    approved: "bg-green-500/10 text-green-600 dark:text-green-400",
-    pending: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
-    draft: "bg-muted text-muted-foreground",
-  };
-
-  return (
-    <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${styles[status]}`}>
-      {status.charAt(0).toUpperCase() + status.slice(1)}
-    </span>
-  );
-}
 
 interface Gallery {
   id: string;
@@ -485,7 +471,6 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                       <span className="flex-shrink-0">{getRelativeTime(asset.dateCreated)}</span>
                     </div>
                     <div className="flex items-center gap-1.5 mt-1">
-                      <StatusBadge status={asset.status} />
                       <span className="text-[10px] text-muted-foreground">{asset.fileSize}</span>
                     </div>
                   </div>
