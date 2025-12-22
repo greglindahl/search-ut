@@ -119,8 +119,8 @@ export function ContentScreen({ screen, history, onBack, isMobile = false }: Con
             <div className="h-9 w-24 bg-muted/50 rounded border border-dashed" />
           </div>
 
-          {/* Dev Spec link - only on home */}
-          {screen === "home" && (
+          {/* Dev Spec link - hidden for now */}
+          {/* {screen === "home" && (
             <div className="pt-8 border-t border-border mt-8">
               <Link to="/dev-spec">
                 <Button variant="outline" className="gap-2">
@@ -129,7 +129,7 @@ export function ContentScreen({ screen, history, onBack, isMobile = false }: Con
                 </Button>
               </Link>
             </div>
-          )}
+          )} */}
         </div>
       </div>
 
