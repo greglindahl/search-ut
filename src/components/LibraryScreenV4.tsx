@@ -371,6 +371,34 @@ export function LibraryScreenV4({ isMobile = false }: LibraryScreenV4Props) {
                   <DropdownMenuItem>Person Name</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    Facet
+                    <ChevronDown className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem>Option 1</DropdownMenuItem>
+                  <DropdownMenuItem>Option 2</DropdownMenuItem>
+                  <DropdownMenuItem>Option 3</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    Facet
+                    <ChevronDown className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem>Option 1</DropdownMenuItem>
+                  <DropdownMenuItem>Option 2</DropdownMenuItem>
+                  <DropdownMenuItem>Option 3</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             {/* Row 2: Asset Controls */}
