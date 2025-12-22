@@ -119,7 +119,7 @@ export function LibraryScreenV2({ isMobile = false }: LibraryScreenV2Props) {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   
   // Use the library search hook
-  const { results, isLoading, totalCount, search } = useLibrarySearch();
+  const { results, allAssets, isLoading, totalCount, search } = useLibrarySearch();
 
   // Handle search from FacetedSearch component
   const handleSearch = useCallback((query: string, selectedFacets: string[]) => {
@@ -335,7 +335,7 @@ export function LibraryScreenV2({ isMobile = false }: LibraryScreenV2Props) {
             <div className="mb-4">
               <div className="flex items-center gap-2">
                 <div className="flex-1">
-                  <FacetedSearch onSearch={handleSearch} />
+                  <FacetedSearch onSearch={handleSearch} assets={allAssets} />
                 </div>
                 <Button
                   variant="outline"
