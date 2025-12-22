@@ -1,12 +1,12 @@
 import { useState, useCallback, useEffect } from "react";
 import { LeftNav, Screen } from "@/components/LeftNav";
-import { LibraryScreen } from "@/components/LibraryScreen";
+import { LibraryScreenV4 } from "@/components/LibraryScreenV4";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Menu, User } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Link, useNavigate } from "react-router-dom";
 
-const LibraryV1 = () => {
+const LibraryV4 = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const [isNavExpanded, setIsNavExpanded] = useState(false);
@@ -45,16 +45,16 @@ const LibraryV1 = () => {
       <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-card border rounded-lg px-3 py-1.5">
         <span className="text-sm text-muted-foreground">Search Variation:</span>
         <div className="flex items-center gap-1">
-          <span className="bg-primary text-primary-foreground text-xs font-medium px-2 py-0.5 rounded">V1</span>
+          <Link to="/library/v1">
+            <span className="text-xs font-medium px-2 py-0.5 rounded hover:bg-accent transition-colors cursor-pointer">V1</span>
+          </Link>
           <Link to="/library/v2">
             <span className="text-xs font-medium px-2 py-0.5 rounded hover:bg-accent transition-colors cursor-pointer">V2</span>
           </Link>
           <Link to="/library/v3">
             <span className="text-xs font-medium px-2 py-0.5 rounded hover:bg-accent transition-colors cursor-pointer">V3</span>
           </Link>
-          <Link to="/library/v4">
-            <span className="text-xs font-medium px-2 py-0.5 rounded hover:bg-accent transition-colors cursor-pointer">V4</span>
-          </Link>
+          <span className="bg-primary text-primary-foreground text-xs font-medium px-2 py-0.5 rounded">V4</span>
         </div>
       </div>
 
@@ -106,9 +106,9 @@ const LibraryV1 = () => {
         isMobileOpen={isMobileNavOpen}
         onCloseMobile={handleCloseMobileNav}
       />
-      <LibraryScreen isMobile={isMobile} />
+      <LibraryScreenV4 isMobile={isMobile} />
     </div>
   );
 };
 
-export default LibraryV1;
+export default LibraryV4;
