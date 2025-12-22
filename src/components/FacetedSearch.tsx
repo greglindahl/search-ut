@@ -72,18 +72,16 @@ function countAssetsForFacet(assets: LibraryAsset[], facet: string): number {
 }
 
 export function FacetedSearch({ onSearch, assets = [] }: FacetedSearchProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [showTypeahead, setShowTypeahead] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFacets, setSelectedFacets] = useState<string[]>([]);
-  const [activeFieldSearch, setActiveFieldSearch] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-        setActiveFieldSearch(null);
+        setShowTypeahead(false);
       }
     };
 
@@ -96,16 +94,38 @@ export function FacetedSearch({ onSearch, assets = [] }: FacetedSearchProps) {
     onSearch?.(searchQuery, selectedFacets);
   }, [searchQuery, selectedFacets, onSearch]);
 
-  // Compute facet counts based on current assets
-  const facetCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    facetGroups.forEach(group => {
-      group.facets.forEach(facet => {
-        counts[facet] = countAssetsForFacet(assets, facet);
+  // Compute typeahead suggestions based on search query
+  const typeaheadSuggestions = useMemo(() => {
+    if (!searchQuery.trim() || searchQuery.length < 2) return [];
+    
+    const query = searchQuery.toLowerCase();
+    const suggestions: { type: string; value: string; asset?: LibraryAsset }[] = [];
+    const seen = new Set<string>();
+
+    // Search through assets for matching names, players, teams, tags
+    assets.forEach(asset => {
+      // Match asset name
+      if (asset.name.toLowerCase().includes(query) && !seen.has(`name:${asset.name}`)) {
+        seen.add(`name:${asset.name}`);
+        suggestions.push({ type: "Asset", value: asset.name, asset });
+      }
+
+      // Match tags (players, teams, etc.)
+      asset.tags.forEach(tag => {
+        if (tag.toLowerCase().includes(query) && !seen.has(`tag:${tag}`)) {
+          seen.add(`tag:${tag}`);
+          // Categorize common tag patterns
+          let tagType = "Tag";
+          if (tag.match(/^[A-Z][a-z]+ [A-Z][a-z]+$/)) tagType = "Player";
+          else if (tag.match(/Chiefs|Ravens|Bulls|Lakers|Yankees|Dodgers|Team/i)) tagType = "Team";
+          else if (tag.match(/2024|2023|Season|Week/i)) tagType = "Season";
+          suggestions.push({ type: tagType, value: tag });
+        }
       });
     });
-    return counts;
-  }, [assets]);
+
+    return suggestions.slice(0, 8); // Limit to 8 suggestions
+  }, [searchQuery, assets]);
 
   const handleFacetToggle = (facet: string) => {
     setSelectedFacets((prev) =>
@@ -113,24 +133,22 @@ export function FacetedSearch({ onSearch, assets = [] }: FacetedSearchProps) {
     );
   };
 
-  const handleFieldSearchClick = (field: string) => {
-    setActiveFieldSearch(field);
-    setSearchQuery(`${field}: `);
-    inputRef.current?.focus();
-  };
-
   const handleRemoveFacet = (facet: string) => {
     setSelectedFacets((prev) => prev.filter((f) => f !== facet));
   };
 
   const handleInputFocus = () => {
-    setIsOpen(true);
+    setShowTypeahead(true);
   };
 
   const handleClearAll = () => {
     setSearchQuery("");
     setSelectedFacets([]);
-    setActiveFieldSearch(null);
+  };
+
+  const handleSuggestionClick = (suggestion: { type: string; value: string }) => {
+    setSearchQuery(suggestion.value);
+    setShowTypeahead(false);
   };
 
   return (
@@ -142,7 +160,10 @@ export function FacetedSearch({ onSearch, assets = [] }: FacetedSearchProps) {
           ref={inputRef}
           type="text"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            setShowTypeahead(true);
+          }}
           onFocus={handleInputFocus}
           placeholder="Search by keyword, tag, player, team, season etc."
           className="pl-10 pr-10 w-full bg-background"
@@ -174,53 +195,23 @@ export function FacetedSearch({ onSearch, assets = [] }: FacetedSearchProps) {
         </div>
       )}
 
-      {/* Dropdown */}
-      {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg z-50">
-          <ScrollArea className="h-[400px]">
-            <div className="p-3">
-              {/* Field Search Options */}
-              <div className="space-y-1 mb-4">
-                {searchFields.map((field) => (
-                  <button
-                    key={field.key}
-                    onClick={() => handleFieldSearchClick(field.label)}
-                    className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-left rounded hover:bg-accent transition-colors"
-                  >
-                    <Search className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-foreground">{field.label}:</span>
-                  </button>
-                ))}
-              </div>
-
-              {/* Facet Groups */}
-              {facetGroups.map((group) => (
-                <div key={group.label} className="mb-4">
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                    {group.label}
-                  </h4>
-                  <div className="flex flex-wrap gap-1.5">
-                    {group.facets.map((facet) => {
-                      const count = facetCounts[facet] || 0;
-                      return (
-                        <Badge
-                          key={facet}
-                          variant={selectedFacets.includes(facet) ? "default" : "outline"}
-                          className={`cursor-pointer hover:bg-accent transition-colors text-xs ${count === 0 ? "opacity-50" : ""}`}
-                          onClick={() => handleFacetToggle(facet)}
-                        >
-                          {facet}
-                          {assets.length > 0 && (
-                            <span className="ml-1 text-[10px] opacity-70">({count})</span>
-                          )}
-                        </Badge>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
+      {/* Typeahead Suggestions */}
+      {showTypeahead && searchQuery.length >= 2 && typeaheadSuggestions.length > 0 && (
+        <div className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg z-50 overflow-hidden">
+          <div className="py-1">
+            {typeaheadSuggestions.map((suggestion, index) => (
+              <button
+                key={`${suggestion.type}-${suggestion.value}-${index}`}
+                onClick={() => handleSuggestionClick(suggestion)}
+                className="w-full flex items-center gap-3 px-3 py-2 text-sm text-left hover:bg-accent transition-colors"
+              >
+                <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider w-12 flex-shrink-0">
+                  {suggestion.type}
+                </span>
+                <span className="text-foreground truncate">{suggestion.value}</span>
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>
