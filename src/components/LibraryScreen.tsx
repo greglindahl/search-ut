@@ -120,12 +120,19 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
   const [activeFolder, setActiveFolder] = useState("all");
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState("assets");
+  const [contentTypeFilter, setContentTypeFilter] = useState<"all" | "image" | "video">("all");
   
   // Use the library search hook
   const { results, allAssets, isLoading, totalCount, search } = useLibrarySearch();
 
+  // Filter results by content type
+  const filteredResults = useMemo(() => {
+    if (contentTypeFilter === "all") return results;
+    return results.filter(asset => asset.type === contentTypeFilter);
+  }, [results, contentTypeFilter]);
+
   // Compute dynamic filter counts based on current results
-  const filterCounts = useMemo(() => computeFilterCounts(results), [results]);
+  const filterCounts = useMemo(() => computeFilterCounts(filteredResults), [filteredResults]);
 
   // Handle search from FacetedSearch component
   const handleSearch = useCallback((query: string, selectedFacets: string[]) => {
@@ -353,14 +360,14 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="gap-2">
-                      Content Type
+                      {contentTypeFilter === "all" ? "Content Type" : contentTypeFilter === "image" ? "Images" : "Videos"}
                       <ChevronDown className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem>All</DropdownMenuItem>
-                    <DropdownMenuItem>Images</DropdownMenuItem>
-                    <DropdownMenuItem>Videos</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setContentTypeFilter("all")}>All</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setContentTypeFilter("image")}>Images</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setContentTypeFilter("video")}>Videos</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
 
@@ -453,7 +460,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                   </div>
                 ))}
               </div>
-            ) : results.length === 0 ? (
+            ) : filteredResults.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <Image className="w-12 h-12 text-muted-foreground/30 mb-4" />
                 <h3 className="text-lg font-medium mb-1">No assets found</h3>
@@ -461,7 +468,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                {results.map((asset) => (
+                {filteredResults.map((asset) => (
                   <div key={asset.id} className="group cursor-pointer">
                     <div className="aspect-[4/3] border rounded-lg bg-muted/30 flex flex-col items-center justify-center mb-2 hover:border-primary/50 transition-colors relative overflow-hidden">
                       <AssetTypeIcon type={asset.type} className="w-8 h-8 text-muted-foreground/50" />
