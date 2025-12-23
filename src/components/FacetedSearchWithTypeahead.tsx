@@ -253,6 +253,7 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
   };
 
   const showTypeahead = isOpen && searchQuery.trim().length > 0 && suggestions.length > 0;
+  const showFacetsPreview = isOpen && searchQuery.trim().length === 0;
 
   return (
     <div ref={containerRef} className="relative w-full">
@@ -295,7 +296,43 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
         </div>
       )}
 
-      {/* Typeahead Suggestions Dropdown */}
+      {/* Facets Preview Dropdown (shown on focus before typing) */}
+      {showFacetsPreview && (
+        <div className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg z-50">
+          <ScrollArea className="h-[400px]">
+            <div className="p-3">
+              {facetGroups.map((group) => (
+                <div key={group.label} className="mb-4">
+                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                    {group.label}
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {group.facets.map((facet) => {
+                      const count = facetCounts[facet] || 0;
+                      const isSelected = selectedFacets.includes(facet);
+                      return (
+                        <Badge
+                          key={facet}
+                          variant={isSelected ? "default" : "outline"}
+                          className={`cursor-pointer hover:bg-accent transition-colors text-xs ${count === 0 && !isSelected ? "opacity-50" : ""}`}
+                          onClick={() => handleFacetToggle(facet)}
+                        >
+                          {facet}
+                          {assets.length > 0 && (
+                            <span className="ml-1 text-[10px] opacity-70">({count})</span>
+                          )}
+                        </Badge>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
+        </div>
+      )}
+
+      {/* Typeahead Suggestions Dropdown (shown when typing) */}
       {showTypeahead && (
         <div className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg z-50">
           <ScrollArea className="max-h-[300px]">
