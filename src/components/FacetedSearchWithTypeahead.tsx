@@ -76,13 +76,21 @@ interface FacetedSearchWithTypeaheadProps {
 // Helper to filter assets based on query and facets
 function filterAssets(assets: LibraryAsset[], query: string, selectedFacets: string[]): LibraryAsset[] {
   return assets.filter(asset => {
-    // Text query match
+    // Text query match - each word in query must match somewhere
     if (query) {
-      const q = query.toLowerCase();
-      const matchesName = asset.name.toLowerCase().includes(q);
-      const matchesCreator = asset.creator.toLowerCase().includes(q);
-      const matchesTags = asset.tags.some(t => t.toLowerCase().includes(q));
-      if (!matchesName && !matchesCreator && !matchesTags) return false;
+      const words = query.toLowerCase().split(/\s+/).filter(w => w.length > 0);
+      const nameLower = asset.name.toLowerCase();
+      const creatorLower = asset.creator.toLowerCase();
+      const tagsLower = asset.tags.map(t => t.toLowerCase());
+      
+      const allWordsMatch = words.every(word => {
+        const matchesName = nameLower.includes(word);
+        const matchesCreator = creatorLower.includes(word);
+        const matchesTags = tagsLower.some(t => t.includes(word));
+        return matchesName || matchesCreator || matchesTags;
+      });
+      
+      if (!allWordsMatch) return false;
     }
 
     // Facet match
