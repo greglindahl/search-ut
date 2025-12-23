@@ -139,10 +139,11 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
   // Extract people from tags (tags that look like names)
   const uniquePeople = useMemo(() => {
     const people = new Set<string>();
+    const excludedItems = ["looking at camera", "slam dunk", "Red Sox", "three pointer"];
     allAssets.forEach(asset => {
       asset.tags.forEach(tag => {
-        // Consider tags with spaces as potential people names
-        if (tag.includes(" ") && !tag.includes("(") && !tag.toLowerCase().includes("shot")) {
+        // Consider tags with spaces as potential people names, exclude non-people items
+        if (tag.includes(" ") && !tag.includes("(") && !tag.toLowerCase().includes("shot") && !excludedItems.includes(tag)) {
           people.add(tag);
         }
       });
