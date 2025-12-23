@@ -21,7 +21,7 @@ const facetGroups: FacetGroup[] = [
   },
   {
     label: "Media Type",
-    facets: ["Photo", "Video", "Graphic", "Audio", "Document"],
+    facets: ["Photo", "Video"],
   },
   {
     label: "Orientation",
