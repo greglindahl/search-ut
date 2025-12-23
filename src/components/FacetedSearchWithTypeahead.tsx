@@ -16,7 +16,7 @@ const facetGroups: FacetGroup[] = [
     facets: [
       "Football", "Basketball", "Baseball", "Esports",
       "Solo (1)", "Small Group (2-4)", "Team Shot (5+)", "Crowd/Fans",
-      "Candid", "Headshot",
+      "Looking at Camera", "Candid", "Headshot",
     ],
   },
   {
@@ -24,7 +24,7 @@ const facetGroups: FacetGroup[] = [
     facets: [
       "Lakers", "Warriors", "Celtics", "Heat", "Nets", "Bucks", "Mavericks", "Suns",
       "Chiefs", "49ers", "Cowboys", "Patriots", "Eagles", "Packers", "Bills",
-      "Yankees", "Dodgers", "Cubs",
+      "Yankees", "Dodgers", "Red Sox", "Cubs",
     ],
   },
   {
