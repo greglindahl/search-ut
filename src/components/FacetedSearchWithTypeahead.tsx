@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { Search, X, User, Tag, Folder, FileType } from "lucide-react";
+import { Search, X, User, Tag, Folder } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -214,18 +214,6 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
         });
     });
 
-    // Match asset names
-    filteredAssets
-      .filter(a => a.name.toLowerCase().includes(query))
-      .slice(0, 4)
-      .forEach(asset => {
-        results.push({
-          type: "asset",
-          value: asset.name,
-          label: asset.name,
-          icon: <FileType className="w-4 h-4 text-muted-foreground" />,
-        });
-      });
 
     return results.slice(0, 8);
   }, [searchQuery, filteredAssets, selectedFacets, facetCounts]);
