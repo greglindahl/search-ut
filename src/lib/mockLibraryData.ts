@@ -38,6 +38,12 @@ const assetNames = {
     "Billboard Design Draft",
     "Newsletter Banner",
     "Landing Page Hero",
+    // NBA player photos
+    "Lebron James Pregame Warmup",
+    "Steph Curry Three Point Celebration",
+    "Kevin Durant Dunk Shot",
+    "Giannis Antetokounmpo Block",
+    "Luka Doncic Assist Highlight",
   ],
   video: [
     "Brand Anthem 60s",
@@ -48,6 +54,13 @@ const assetNames = {
     "Tutorial How-To Guide",
     "Event Highlight Reel",
     "Animated Logo Intro",
+    // NBA player videos
+    "Lebron James Slam Dunk Compilation",
+    "Lebron James Game Winner vs Celtics",
+    "Steph Curry 60 Points Highlights",
+    "Kevin Durant Crossover Mix",
+    "Giannis Antetokounmpo Fastbreak Dunk",
+    "Luka Doncic Behind the Back Pass",
   ],
 };
 // Tags that match facets from both FacetedSearch (V1) and FacetedPillsSearch (V3)
@@ -72,6 +85,14 @@ const tagSets = [
   ["social", "baseball"],
   ["marketing", "brand", "product", "football"],
   ["social", "product", "basketball"],
+  // NBA player + action tags
+  ["Lebron James", "dunk", "slam dunk", "basketball", "NBA", "Lakers"],
+  ["Lebron James", "game winner", "clutch", "basketball", "NBA"],
+  ["Steph Curry", "three pointer", "shooting", "basketball", "NBA", "Warriors"],
+  ["Steph Curry", "celebration", "basketball", "NBA"],
+  ["Kevin Durant", "dunk", "crossover", "basketball", "NBA", "Suns"],
+  ["Giannis Antetokounmpo", "dunk", "block", "basketball", "NBA", "Bucks"],
+  ["Luka Doncic", "assist", "passing", "basketball", "NBA", "Mavericks"],
 ];
 
 // Helper functions for random generation (used only as fallback)
