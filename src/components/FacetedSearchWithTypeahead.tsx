@@ -232,6 +232,13 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
     setIsOpen(true);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      setIsOpen(false);
+    }
+  };
+
   const handleClearAll = () => {
     setSearchQuery("");
     setSelectedFacets([]);
@@ -264,6 +271,7 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={handleInputFocus}
+          onKeyDown={handleKeyDown}
           placeholder="Search by keyword, tag, player, team, season etc."
           className="pl-10 pr-10 w-full bg-background"
         />
