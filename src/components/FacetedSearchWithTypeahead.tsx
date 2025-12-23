@@ -20,6 +20,20 @@ const facetGroups: FacetGroup[] = [
     ],
   },
   {
+    label: "Teams",
+    facets: [
+      "Lakers", "Warriors", "Celtics", "Heat", "Nets", "Bucks", "Mavericks", "Suns",
+      "Chiefs", "49ers", "Cowboys", "Patriots", "Eagles", "Packers", "Bills",
+      "Yankees", "Dodgers", "Red Sox", "Cubs",
+    ],
+  },
+  {
+    label: "Players",
+    facets: [
+      "Lebron James", "Steph Curry", "Kevin Durant", "Giannis Antetokounmpo", "Luka Doncic",
+    ],
+  },
+  {
     label: "Media Type",
     facets: ["Photo", "Video"],
   },
