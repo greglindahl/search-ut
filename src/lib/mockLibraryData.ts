@@ -65,32 +65,32 @@ const assetNames = {
 };
 // Tags that match facets from both FacetedSearch (V1) and FacetedPillsSearch (V3)
 const tagSets = [
-  // Sports tags (matching FacetedSearch facets)
-  ["football", "team shot (5+)", "candid"],
-  ["basketball", "small group (2-4)", "looking at camera"],
-  ["baseball", "solo (1)", "headshot"],
+  // Sports tags with team names
+  ["football", "team shot (5+)", "candid", "Chiefs"],
+  ["basketball", "small group (2-4)", "looking at camera", "Lakers"],
+  ["baseball", "solo (1)", "headshot", "Yankees"],
   ["esports", "small group (2-4)", "candid"],
-  ["football", "crowd/fans", "landscape"],
-  ["basketball", "team shot (5+)", "portrait"],
-  ["football", "solo (1)", "looking at camera"],
-  ["baseball", "team shot (5+)", "candid"],
-  // Mixed tags (matching FacetedPillsSearch facets)
-  ["marketing", "social", "football"],
-  ["product", "brand", "basketball"],
-  ["social", "brand", "baseball"],
+  ["football", "crowd/fans", "landscape", "49ers"],
+  ["basketball", "team shot (5+)", "portrait", "Warriors"],
+  ["football", "solo (1)", "looking at camera", "Cowboys"],
+  ["baseball", "team shot (5+)", "candid", "Dodgers"],
+  // Mixed tags with teams
+  ["marketing", "social", "football", "Patriots"],
+  ["product", "brand", "basketball", "Celtics"],
+  ["social", "brand", "baseball", "Red Sox"],
   ["marketing", "product", "esports"],
-  ["brand", "football"],
-  ["marketing", "basketball"],
-  ["product", "football"],
-  ["social", "baseball"],
-  ["marketing", "brand", "product", "football"],
-  ["social", "product", "basketball"],
-  // NBA player + action tags
+  ["brand", "football", "Eagles"],
+  ["marketing", "basketball", "Heat"],
+  ["product", "football", "Packers"],
+  ["social", "baseball", "Cubs"],
+  ["marketing", "brand", "product", "football", "Bills"],
+  ["social", "product", "basketball", "Nets"],
+  // NBA player + action + team tags
   ["Lebron James", "dunk", "slam dunk", "basketball", "NBA", "Lakers"],
-  ["Lebron James", "game winner", "clutch", "basketball", "NBA"],
+  ["Lebron James", "game winner", "clutch", "basketball", "NBA", "Lakers", "Cavaliers"],
   ["Steph Curry", "three pointer", "shooting", "basketball", "NBA", "Warriors"],
-  ["Steph Curry", "celebration", "basketball", "NBA"],
-  ["Kevin Durant", "dunk", "crossover", "basketball", "NBA", "Suns"],
+  ["Steph Curry", "celebration", "basketball", "NBA", "Warriors"],
+  ["Kevin Durant", "dunk", "crossover", "basketball", "NBA", "Suns", "Warriors", "Nets"],
   ["Giannis Antetokounmpo", "dunk", "block", "basketball", "NBA", "Bucks"],
   ["Luka Doncic", "assist", "passing", "basketball", "NBA", "Mavericks"],
 ];
