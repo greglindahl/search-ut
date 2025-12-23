@@ -78,9 +78,7 @@ function filterAssets(assets: LibraryAsset[], query: string, selectedFacets: str
         asset.tags.some(tag => tag.toLowerCase() === facet) ||
         asset.type.toLowerCase() === facet ||
         (facet === "photo" && asset.type === "image") ||
-        (facet === "video" && asset.type === "video") ||
-        (facet === "audio" && asset.type === "audio") ||
-        (facet === "document" && asset.type === "document")
+        (facet === "video" && asset.type === "video")
       );
       if (!matchesFacet) return false;
     }
@@ -96,9 +94,7 @@ function countAssetsForFacet(assets: LibraryAsset[], facet: string): number {
     asset.tags.some(tag => tag.toLowerCase() === lowerFacet) ||
     asset.type.toLowerCase() === lowerFacet ||
     (facet.toLowerCase() === "photo" && asset.type === "image") ||
-    (facet.toLowerCase() === "video" && asset.type === "video") ||
-    (facet.toLowerCase() === "audio" && asset.type === "audio") ||
-    (facet.toLowerCase() === "document" && asset.type === "document")
+    (facet.toLowerCase() === "video" && asset.type === "video")
   ).length;
 }
 

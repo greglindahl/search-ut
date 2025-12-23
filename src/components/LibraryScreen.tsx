@@ -18,10 +18,6 @@ function AssetTypeIcon({ type, className }: { type: LibraryAsset["type"]; classN
   switch (type) {
     case "video":
       return <Video className={className} />;
-    case "document":
-      return <FileText className={className} />;
-    case "audio":
-      return <Music className={className} />;
     default:
       return <Image className={className} />;
   }
