@@ -5,7 +5,7 @@ export interface LibraryAsset {
   name: string;
   creator: string;
   creatorId: string;
-  type: "image" | "video" | "document" | "audio";
+  type: "image" | "video";
   dateCreated: Date;
   aspectRatio: "1:1" | "16:9" | "9:16" | "4:3";
   status: "approved" | "pending" | "draft";
@@ -49,22 +49,7 @@ const assetNames = {
     "Event Highlight Reel",
     "Animated Logo Intro",
   ],
-  document: [
-    "Brand Guidelines 2024",
-    "Press Kit PDF",
-    "Product Spec Sheet",
-    "Campaign Brief Q2",
-    "Style Guide Update",
-    "Presentation Deck",
-  ],
-  audio: [
-    "Podcast Episode 42",
-    "Radio Spot 30s",
-    "Brand Jingle Master",
-    "Interview Raw Audio",
-  ],
 };
-
 // Tags that match facets from both FacetedSearch (V1) and FacetedPillsSearch (V3)
 const tagSets = [
   // Sports tags (matching FacetedSearch facets)
@@ -116,7 +101,7 @@ export const mockLibraryAssets: LibraryAsset[] = (() => {
   };
   
   const generateSeededAsset = (id: number): LibraryAsset => {
-    const type = seededFromArray(["image", "video", "document", "audio"] as const);
+    const type = seededFromArray(["image", "video"] as const);
     const names = assetNames[type];
     const creator = seededFromArray(creators);
     const aspectRatio = seededFromArray(["1:1", "16:9", "9:16", "4:3"] as const);
@@ -126,8 +111,6 @@ export const mockLibraryAssets: LibraryAsset[] = (() => {
     const fileSizes = {
       image: ["1.2 MB", "2.4 MB", "856 KB", "3.1 MB", "1.8 MB"],
       video: ["45 MB", "120 MB", "28 MB", "250 MB", "85 MB"],
-      document: ["2.1 MB", "5.4 MB", "890 KB", "1.5 MB"],
-      audio: ["8 MB", "15 MB", "4.2 MB", "22 MB"],
     };
 
     const dimensions = {
@@ -142,8 +125,6 @@ export const mockLibraryAssets: LibraryAsset[] = (() => {
     const extension = {
       image: seededFromArray([".png", ".jpg", ".webp"]),
       video: seededFromArray([".mp4", ".mov"]),
-      document: seededFromArray([".pdf", ".pptx"]),
-      audio: seededFromArray([".mp3", ".wav"]),
     };
 
     return {
@@ -158,7 +139,7 @@ export const mockLibraryAssets: LibraryAsset[] = (() => {
       tags,
       fileSize: seededFromArray(fileSizes[type]),
       dimensions: type === "image" || type === "video" ? seededFromArray(dimensions[aspectRatio]) : undefined,
-      duration: type === "video" || type === "audio" ? seededFromArray(durations) : undefined,
+      duration: type === "video" ? seededFromArray(durations) : undefined,
     };
   };
   
