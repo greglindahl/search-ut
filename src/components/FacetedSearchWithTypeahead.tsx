@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { Search, X, User, Tag, Folder } from "lucide-react";
+import { Search, X, User, Tag, Folder, Clock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -120,10 +120,21 @@ function countAssetsForFacet(assets: LibraryAsset[], facet: string): number {
   ).length;
 }
 
+const RECENT_SEARCHES_KEY = "library-recent-searches";
+const MAX_RECENT_SEARCHES = 5;
+
 export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, assets = [] }: FacetedSearchWithTypeaheadProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFacets, setSelectedFacets] = useState<string[]>([]);
+  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem(RECENT_SEARCHES_KEY);
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -240,11 +251,27 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
     setIsOpen(true);
   };
 
+  const addToRecentSearches = useCallback((query: string) => {
+    if (!query.trim()) return;
+    setRecentSearches(prev => {
+      const filtered = prev.filter(s => s.toLowerCase() !== query.toLowerCase());
+      const updated = [query, ...filtered].slice(0, MAX_RECENT_SEARCHES);
+      localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
+      addToRecentSearches(searchQuery);
       setIsOpen(false);
     }
+  };
+
+  const handleRecentSearchClick = (search: string) => {
+    setSearchQuery(search);
+    setIsOpen(false);
   };
 
   const handleClearAll = () => {
@@ -315,6 +342,26 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
         <div className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg z-50">
           <ScrollArea className="h-[400px]">
             <div className="p-3">
+              {/* Recent Searches Section */}
+              {recentSearches.length > 0 && (
+                <div className="mb-4">
+                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                    Recent Searches
+                  </h4>
+                  <div className="flex flex-col gap-1">
+                    {recentSearches.map((search, idx) => (
+                      <button
+                        key={`recent-${idx}`}
+                        onClick={() => handleRecentSearchClick(search)}
+                        className="flex items-center gap-2 px-2 py-1.5 text-sm text-left rounded hover:bg-accent transition-colors"
+                      >
+                        <Clock className="w-4 h-4 text-muted-foreground" />
+                        <span>{search}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
               {facetGroups
                 .filter((group) => {
                   // Only show group if at least one facet has count > 0 or is selected
