@@ -163,19 +163,19 @@ export function LibraryScreenV3({ isMobile = false }: LibraryScreenV3Props) {
     );
   };
 
-  const showFolderSidebar = activeTab === "folders";
+  // Show expanded sidebar only on folders tab, collapsed on other tabs
+  const isFoldersTab = activeTab === "folders";
+  const showExpanded = isFoldersTab && isFolderSidebarExpanded;
 
   return (
     <div className="flex-1 flex">
-      {/* Folders Sidebar - Animated show/hide based on tab */}
+      {/* Folders Sidebar - Always visible, expanded on folders tab, collapsed on other tabs */}
       <div
         className={`border-r bg-card flex flex-col transition-all duration-300 ease-in-out overflow-hidden ${
-          showFolderSidebar 
-            ? (isFolderSidebarExpanded ? "w-64 opacity-100" : "w-12 opacity-100") 
-            : "w-0 opacity-0 border-r-0"
+          showExpanded ? "w-64 opacity-100" : "w-12 opacity-100"
         }`}
       >
-        {isFolderSidebarExpanded ? (
+        {showExpanded ? (
           <>
             {/* Sidebar Header - Expanded */}
             <div className="p-4 border-b flex items-center justify-between min-w-64">
@@ -196,20 +196,22 @@ export function LibraryScreenV3({ isMobile = false }: LibraryScreenV3Props) {
           </>
         ) : (
           /* Collapsed State - Icon only */
-          <div className="p-2 border-b flex flex-col items-center gap-1 min-w-12">
+          <div className="p-2 flex flex-col items-center gap-1 min-w-12">
             <button
               className="p-2 hover:bg-accent rounded transition-colors"
               aria-label="Folders"
             >
               <Folder className="w-4 h-4 text-muted-foreground" />
             </button>
-            <button
-              onClick={() => setIsFolderSidebarExpanded(true)}
-              className="p-2 hover:bg-accent rounded transition-colors"
-              aria-label="Expand folders"
-            >
-              <ChevronRight className="w-4 h-4 text-muted-foreground" />
-            </button>
+            {isFoldersTab && (
+              <button
+                onClick={() => setIsFolderSidebarExpanded(true)}
+                className="p-2 hover:bg-accent rounded transition-colors"
+                aria-label="Expand folders"
+              >
+                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              </button>
+            )}
           </div>
         )}
       </div>
