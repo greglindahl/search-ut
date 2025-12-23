@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Folder, ChevronDown, Plus, Upload, Grid3X3, List, CheckSquare, Image, Images, FileText, Music, Video, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -116,10 +116,16 @@ interface LibraryScreenProps {
 }
 
 export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
-  const [isFolderSidebarExpanded, setIsFolderSidebarExpanded] = useState(true);
+  const [activeTab, setActiveTab] = useState("assets");
+  // Default expanded on folders tab, collapsed on other tabs
+  const [isFolderSidebarExpanded, setIsFolderSidebarExpanded] = useState(false);
   const [activeFolder, setActiveFolder] = useState("all");
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
-  const [activeTab, setActiveTab] = useState("assets");
+  
+  // Auto-expand/collapse sidebar based on active tab
+  useEffect(() => {
+    setIsFolderSidebarExpanded(activeTab === "folders");
+  }, [activeTab]);
   const [contentTypeFilter, setContentTypeFilter] = useState<"all" | "image" | "video">("all");
   const [creatorFilter, setCreatorFilter] = useState<string>("all");
   const [aspectRatioFilter, setAspectRatioFilter] = useState<string>("all");
@@ -234,19 +240,18 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
     );
   };
 
-  // Show expanded sidebar only on folders tab, collapsed on other tabs
+  // Determine if we should show expanded sidebar (user can toggle on any tab)
   const isFoldersTab = activeTab === "folders";
-  const showExpanded = isFoldersTab && isFolderSidebarExpanded;
 
   return (
     <div className="flex-1 flex">
-      {/* Folders Sidebar - Always visible, expanded on folders tab, collapsed on other tabs */}
+      {/* Folders Sidebar - Always visible, toggleable on all tabs */}
       <div
         className={`border-r bg-card flex flex-col transition-all duration-300 ease-in-out overflow-hidden ${
-          showExpanded ? "w-64 opacity-100" : "w-12 opacity-100"
+          isFolderSidebarExpanded ? "w-64 opacity-100" : "w-12 opacity-100"
         }`}
       >
-        {showExpanded ? (
+        {isFolderSidebarExpanded ? (
           <>
             {/* Sidebar Header - Expanded */}
             <div className="p-4 border-b flex items-center justify-between min-w-64">
@@ -266,23 +271,22 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
             </div>
           </>
         ) : (
-          /* Collapsed State - Icon only */
+          /* Collapsed State - Icon with expand button */
           <div className="p-2 flex flex-col items-center gap-1 min-w-12">
             <button
+              onClick={() => setIsFolderSidebarExpanded(true)}
               className="p-2 hover:bg-accent rounded transition-colors"
-              aria-label="Folders"
+              aria-label="Expand folders"
             >
               <Folder className="w-4 h-4 text-muted-foreground" />
             </button>
-            {isFoldersTab && (
-              <button
-                onClick={() => setIsFolderSidebarExpanded(true)}
-                className="p-2 hover:bg-accent rounded transition-colors"
-                aria-label="Expand folders"
-              >
-                <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              </button>
-            )}
+            <button
+              onClick={() => setIsFolderSidebarExpanded(true)}
+              className="p-2 hover:bg-accent rounded transition-colors"
+              aria-label="Expand folders"
+            >
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </button>
           </div>
         )}
       </div>
