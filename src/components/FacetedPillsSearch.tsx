@@ -30,8 +30,6 @@ const facetOptions: FacetOption[] = [
     values: [
       { value: "image", label: "Image" },
       { value: "video", label: "Video" },
-      { value: "document", label: "Document" },
-      { value: "audio", label: "Audio" },
     ],
   },
   {
