@@ -307,7 +307,16 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
         <div className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg z-50">
           <ScrollArea className="h-[400px]">
             <div className="p-3">
-              {facetGroups.map((group) => (
+              {facetGroups
+                .filter((group) => {
+                  // Only show group if at least one facet has count > 0 or is selected
+                  return group.facets.some((facet) => {
+                    const count = facetCounts[facet] || 0;
+                    const isSelected = selectedFacets.includes(facet);
+                    return count > 0 || isSelected;
+                  });
+                })
+                .map((group) => (
                 <div key={group.label} className="mb-4">
                   <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                     {group.label}
