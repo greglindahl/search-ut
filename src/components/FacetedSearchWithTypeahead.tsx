@@ -313,23 +313,29 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
                     {group.label}
                   </h4>
                   <div className="flex flex-wrap gap-1.5">
-                    {group.facets.map((facet) => {
-                      const count = facetCounts[facet] || 0;
-                      const isSelected = selectedFacets.includes(facet);
-                      return (
-                        <Badge
-                          key={facet}
-                          variant={isSelected ? "default" : "outline"}
-                          className={`cursor-pointer hover:bg-accent transition-colors text-xs ${count === 0 && !isSelected ? "opacity-50" : ""}`}
-                          onClick={() => handleFacetToggle(facet)}
-                        >
-                          {facet}
-                          {assets.length > 0 && (
-                            <span className="ml-1 text-[10px] opacity-70">({count})</span>
-                          )}
-                        </Badge>
-                      );
-                    })}
+                    {group.facets
+                      .filter((facet) => {
+                        const count = facetCounts[facet] || 0;
+                        const isSelected = selectedFacets.includes(facet);
+                        return count > 0 || isSelected;
+                      })
+                      .map((facet) => {
+                        const count = facetCounts[facet] || 0;
+                        const isSelected = selectedFacets.includes(facet);
+                        return (
+                          <Badge
+                            key={facet}
+                            variant={isSelected ? "default" : "outline"}
+                            className="cursor-pointer hover:bg-accent transition-colors text-xs"
+                            onClick={() => handleFacetToggle(facet)}
+                          >
+                            {facet}
+                            {assets.length > 0 && (
+                              <span className="ml-1 text-[10px] opacity-70">({count})</span>
+                            )}
+                          </Badge>
+                        );
+                      })}
                   </div>
                 </div>
               ))}
