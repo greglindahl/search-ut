@@ -1,6 +1,5 @@
 import { useState, useCallback } from "react";
-import { ChevronLeft, ChevronRight, Folder, ChevronDown, Plus, Upload, Grid3X3, List, CheckSquare, Image, Images, Filter, FileText, Music, Video, Loader2, X } from "lucide-react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { ChevronLeft, ChevronRight, Folder, ChevronDown, Plus, Upload, Grid3X3, List, CheckSquare, Image, Images, Filter, FileText, Music, Video, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { FacetedSearch } from "@/components/FacetedSearch";
@@ -100,7 +99,6 @@ interface LibraryScreenV2Props {
 
 export function LibraryScreenV2({ isMobile = false }: LibraryScreenV2Props) {
   const [isFolderSidebarExpanded, setIsFolderSidebarExpanded] = useState(true);
-  const [isFolderSheetOpen, setIsFolderSheetOpen] = useState(false);
   const [activeFolder, setActiveFolder] = useState("all");
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState("assets");
@@ -239,9 +237,8 @@ export function LibraryScreenV2({ isMobile = false }: LibraryScreenV2Props) {
           /* Collapsed State - Icon only */
           <div className="p-2 flex flex-col items-center gap-1 min-w-12">
             <button
-              onClick={() => !isFoldersTab && setIsFolderSheetOpen(true)}
               className="p-2 hover:bg-accent rounded transition-colors"
-              aria-label="Open folders"
+              aria-label="Folders"
             >
               <Folder className="w-4 h-4 text-muted-foreground" />
             </button>
@@ -257,18 +254,6 @@ export function LibraryScreenV2({ isMobile = false }: LibraryScreenV2Props) {
           </div>
         )}
       </div>
-
-      {/* Folder Sheet Overlay - Opens when clicking folder icon from non-folders tabs */}
-      <Sheet open={isFolderSheetOpen} onOpenChange={setIsFolderSheetOpen}>
-        <SheetContent side="left" className="w-64 p-0">
-          <SheetHeader className="p-4 border-b">
-            <SheetTitle className="text-sm font-medium">Folders</SheetTitle>
-          </SheetHeader>
-          <div className="flex-1 p-2 overflow-y-auto">
-            {folders.map((folder) => renderFolder(folder))}
-          </div>
-        </SheetContent>
-      </Sheet>
 
       {/* Main Content Area */}
       <div className={`flex-1 flex flex-col min-w-0 px-4 md:px-8 xl:px-16 pb-12 ${isMobile ? "pt-[58px]" : "pt-20"}`}>
