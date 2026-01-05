@@ -1,5 +1,7 @@
-import { ChevronDown, User, Calendar, FileType, Ratio, Users, FolderOpen } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown, User, Calendar, FileType, Ratio, Users, FolderOpen, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -92,33 +94,106 @@ interface FilterBarProps {
 }
 
 export function FilterBar({ onFilterChange }: FilterBarProps) {
+  const [activeFilters, setActiveFilters] = useState<Record<string, { value: string; label: string }>>({});
+
+  const handleFilterSelect = (filterId: string, value: string, label: string) => {
+    if (value === "all") {
+      // Remove filter when "All" is selected
+      const newFilters = { ...activeFilters };
+      delete newFilters[filterId];
+      setActiveFilters(newFilters);
+    } else {
+      setActiveFilters(prev => ({
+        ...prev,
+        [filterId]: { value, label }
+      }));
+    }
+    onFilterChange?.(filterId, value);
+  };
+
+  const handleRemoveFilter = (filterId: string) => {
+    const newFilters = { ...activeFilters };
+    delete newFilters[filterId];
+    setActiveFilters(newFilters);
+    onFilterChange?.(filterId, "all");
+  };
+
+  const clearAllFilters = () => {
+    setActiveFilters({});
+    Object.keys(activeFilters).forEach(filterId => {
+      onFilterChange?.(filterId, "all");
+    });
+  };
+
+  const activeFilterCount = Object.keys(activeFilters).length;
+
   return (
-    <div className="flex flex-wrap gap-1.5">
-      {filters.map((filter) => (
-        <DropdownMenu key={filter.id}>
-          <DropdownMenuTrigger asChild>
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="h-8 gap-1.5 px-2.5 text-xs font-medium"
-            >
-              {filter.icon}
-              <span className="hidden sm:inline">{filter.label}</span>
-              <ChevronDown className="w-3 h-3 opacity-50" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="bg-popover z-50">
-            {filter.options.map((option) => (
-              <DropdownMenuItem
-                key={option.value}
-                onClick={() => onFilterChange?.(filter.id, option.value)}
+    <div className="flex flex-wrap items-center gap-1.5">
+      {filters.map((filter) => {
+        const isActive = activeFilters[filter.id];
+        return (
+          <DropdownMenu key={filter.id}>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant={isActive ? "default" : "outline"}
+                size="sm"
+                className="h-8 gap-1.5 px-2.5 text-xs font-medium"
               >
-                {option.label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ))}
+                {filter.icon}
+                <span className="hidden sm:inline">
+                  {isActive ? activeFilters[filter.id].label : filter.label}
+                </span>
+                <ChevronDown className="w-3 h-3 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="bg-popover z-50">
+              {filter.options.map((option) => (
+                <DropdownMenuItem
+                  key={option.value}
+                  onClick={() => handleFilterSelect(filter.id, option.value, option.label)}
+                  className={activeFilters[filter.id]?.value === option.value ? "bg-accent" : ""}
+                >
+                  {option.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      })}
+
+      {/* Active Filter Badges */}
+      {activeFilterCount > 0 && (
+        <>
+          <div className="h-4 w-px bg-border mx-1" />
+          {Object.entries(activeFilters).map(([filterId, { label }]) => {
+            const filter = filters.find(f => f.id === filterId);
+            return (
+              <Badge 
+                key={filterId} 
+                variant="secondary" 
+                className="h-7 gap-1 pl-2 pr-1 text-xs cursor-pointer hover:bg-secondary/80"
+              >
+                <span className="text-muted-foreground">{filter?.label}:</span>
+                <span>{label}</span>
+                <button 
+                  onClick={() => handleRemoveFilter(filterId)}
+                  className="ml-0.5 rounded-full p-0.5 hover:bg-muted"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </Badge>
+            );
+          })}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearAllFilters}
+            className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
+          >
+            Clear all
+          </Button>
+        </>
+      )}
     </div>
   );
 }
