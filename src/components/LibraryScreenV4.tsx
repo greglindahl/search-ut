@@ -1,8 +1,9 @@
 import { useState, useCallback, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Folder, ChevronDown, Plus, Upload, Grid3X3, List, CheckSquare, Image, Images, FileText, Music, Video, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Folder, ChevronDown, Plus, Upload, Grid3X3, List, CheckSquare, Image, Images, Video, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { FacetedSearchWithDropdown } from "@/components/FacetedSearchWithDropdown";
+import { FilterBar } from "@/components/FilterBar";
 import { useLibrarySearch } from "@/hooks/useLibrarySearch";
 import { getRelativeTime, LibraryAsset } from "@/lib/mockLibraryData";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -296,111 +297,9 @@ export function LibraryScreenV4({ isMobile = false }: LibraryScreenV4Props) {
               <FacetedSearchWithDropdown onSearch={handleSearch} assets={allAssets} />
             </div>
 
-            {/* Row 1: Filters */}
-            <div className="flex flex-wrap items-center gap-2 mb-4">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    Creator
-                    <ChevronDown className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>All Creators</DropdownMenuItem>
-                  <DropdownMenuItem>Creator 1</DropdownMenuItem>
-                  <DropdownMenuItem>Creator 2</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    Date Range
-                    <ChevronDown className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>All Time</DropdownMenuItem>
-                  <DropdownMenuItem>Last 7 Days</DropdownMenuItem>
-                  <DropdownMenuItem>Last 30 Days</DropdownMenuItem>
-                  <DropdownMenuItem>Last Year</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    Content Type
-                    <ChevronDown className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>All Types</DropdownMenuItem>
-                  <DropdownMenuItem>Images</DropdownMenuItem>
-                  <DropdownMenuItem>Videos</DropdownMenuItem>
-                  <DropdownMenuItem>Documents</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    Aspect Ratio
-                    <ChevronDown className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>All Ratios</DropdownMenuItem>
-                  <DropdownMenuItem>1:1</DropdownMenuItem>
-                  <DropdownMenuItem>16:9</DropdownMenuItem>
-                  <DropdownMenuItem>4:3</DropdownMenuItem>
-                  <DropdownMenuItem>9:16</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    People
-                    <ChevronDown className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>All</DropdownMenuItem>
-                  <DropdownMenuItem>Person Name</DropdownMenuItem>
-                  <DropdownMenuItem>Person Name</DropdownMenuItem>
-                  <DropdownMenuItem>Person Name</DropdownMenuItem>
-                  <DropdownMenuItem>Person Name</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    Facet
-                    <ChevronDown className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>Option 1</DropdownMenuItem>
-                  <DropdownMenuItem>Option 2</DropdownMenuItem>
-                  <DropdownMenuItem>Option 3</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    Facet
-                    <ChevronDown className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>Option 1</DropdownMenuItem>
-                  <DropdownMenuItem>Option 2</DropdownMenuItem>
-                  <DropdownMenuItem>Option 3</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+            {/* Filters */}
+            <div className="mb-4">
+              <FilterBar />
             </div>
 
             {/* Row 2: Asset Controls */}
