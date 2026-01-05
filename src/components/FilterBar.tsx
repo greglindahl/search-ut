@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { ChevronDown, User, Calendar, FileType, Ratio, Users, FolderOpen, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuCheckboxItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -19,6 +18,7 @@ interface FilterConfig {
   label: string;
   icon: React.ReactNode;
   options: FilterOption[];
+  multiSelect?: boolean;
 }
 
 const filters: FilterConfig[] = [
@@ -26,18 +26,19 @@ const filters: FilterConfig[] = [
     id: "creator",
     label: "Creator",
     icon: <User className="w-4 h-4" />,
+    multiSelect: true,
     options: [
-      { label: "All Creators", value: "all" },
       { label: "Creator 1", value: "creator-1" },
       { label: "Creator 2", value: "creator-2" },
+      { label: "Creator 3", value: "creator-3" },
     ],
   },
   {
     id: "content-type",
     label: "Type",
     icon: <FileType className="w-4 h-4" />,
+    multiSelect: true,
     options: [
-      { label: "All Types", value: "all" },
       { label: "Images", value: "images" },
       { label: "Videos", value: "videos" },
       { label: "Documents", value: "documents" },
@@ -47,18 +48,18 @@ const filters: FilterConfig[] = [
     id: "people",
     label: "People",
     icon: <Users className="w-4 h-4" />,
+    multiSelect: true,
     options: [
-      { label: "All", value: "all" },
-      { label: "Person Name", value: "person-1" },
-      { label: "Person Name", value: "person-2" },
+      { label: "Person 1", value: "person-1" },
+      { label: "Person 2", value: "person-2" },
     ],
   },
   {
     id: "folders",
     label: "Folders",
     icon: <FolderOpen className="w-4 h-4" />,
+    multiSelect: true,
     options: [
-      { label: "All Folders", value: "all" },
       { label: "Season 2025", value: "season-2025" },
       { label: "Season 2024", value: "season-2024" },
       { label: "Archive", value: "archive" },
@@ -90,39 +91,78 @@ const filters: FilterConfig[] = [
 ];
 
 interface FilterBarProps {
-  onFilterChange?: (filterId: string, value: string) => void;
+  onFilterChange?: (filterId: string, values: string[]) => void;
 }
 
 export function FilterBar({ onFilterChange }: FilterBarProps) {
-  const [activeFilters, setActiveFilters] = useState<Record<string, { value: string; label: string }>>({});
+  const [activeFilters, setActiveFilters] = useState<Record<string, { value: string; label: string }[]>>({});
 
-  const handleFilterSelect = (filterId: string, value: string, label: string) => {
-    if (value === "all") {
-      // Remove filter when "All" is selected
-      const newFilters = { ...activeFilters };
-      delete newFilters[filterId];
-      setActiveFilters(newFilters);
-    } else {
-      setActiveFilters(prev => ({
-        ...prev,
-        [filterId]: { value, label }
-      }));
-    }
-    onFilterChange?.(filterId, value);
+  const handleMultiSelect = (filterId: string, value: string, label: string, checked: boolean) => {
+    setActiveFilters(prev => {
+      const current = prev[filterId] || [];
+      let updated: { value: string; label: string }[];
+      
+      if (checked) {
+        updated = [...current, { value, label }];
+      } else {
+        updated = current.filter(item => item.value !== value);
+      }
+      
+      const newFilters = { ...prev };
+      if (updated.length === 0) {
+        delete newFilters[filterId];
+      } else {
+        newFilters[filterId] = updated;
+      }
+      
+      onFilterChange?.(filterId, updated.map(i => i.value));
+      return newFilters;
+    });
   };
 
-  const handleRemoveFilter = (filterId: string) => {
-    const newFilters = { ...activeFilters };
-    delete newFilters[filterId];
-    setActiveFilters(newFilters);
-    onFilterChange?.(filterId, "all");
+  const handleSingleSelect = (filterId: string, value: string, label: string) => {
+    setActiveFilters(prev => {
+      const newFilters = { ...prev };
+      if (value === "all") {
+        delete newFilters[filterId];
+        onFilterChange?.(filterId, []);
+      } else {
+        newFilters[filterId] = [{ value, label }];
+        onFilterChange?.(filterId, [value]);
+      }
+      return newFilters;
+    });
+  };
+
+  const handleRemoveValue = (filterId: string, value: string) => {
+    setActiveFilters(prev => {
+      const current = prev[filterId] || [];
+      const updated = current.filter(item => item.value !== value);
+      const newFilters = { ...prev };
+      if (updated.length === 0) {
+        delete newFilters[filterId];
+      } else {
+        newFilters[filterId] = updated;
+      }
+      onFilterChange?.(filterId, updated.map(i => i.value));
+      return newFilters;
+    });
+  };
+
+  const clearFilter = (filterId: string) => {
+    setActiveFilters(prev => {
+      const newFilters = { ...prev };
+      delete newFilters[filterId];
+      onFilterChange?.(filterId, []);
+      return newFilters;
+    });
   };
 
   const clearAllFilters = () => {
-    setActiveFilters({});
     Object.keys(activeFilters).forEach(filterId => {
-      onFilterChange?.(filterId, "all");
+      onFilterChange?.(filterId, []);
     });
+    setActiveFilters({});
   };
 
   const activeFilterCount = Object.keys(activeFilters).length;
@@ -130,69 +170,98 @@ export function FilterBar({ onFilterChange }: FilterBarProps) {
   return (
     <div className="flex flex-wrap items-center gap-1.5">
       {filters.map((filter) => {
-        const isActive = activeFilters[filter.id];
+        const selected = activeFilters[filter.id] || [];
+        const isActive = selected.length > 0;
+        const isMulti = filter.multiSelect;
+
         return (
           <DropdownMenu key={filter.id}>
             <DropdownMenuTrigger asChild>
-              <Button 
-                variant={isActive ? "default" : "outline"}
-                size="sm"
-                className="h-8 gap-1.5 px-2.5 text-xs font-medium"
-              >
-                {filter.icon}
-                <span className="hidden sm:inline">
-                  {isActive ? activeFilters[filter.id].label : filter.label}
-                </span>
-                <ChevronDown className="w-3 h-3 opacity-50" />
-              </Button>
+              {isMulti && isActive ? (
+                <div className="inline-flex items-start gap-1 p-1.5 border border-input rounded-md bg-background min-w-[120px] max-w-[280px]">
+                  <div className="flex flex-wrap gap-1 flex-1">
+                    {selected.map((item) => (
+                      <span
+                        key={item.value}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 bg-muted rounded text-xs"
+                      >
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveValue(filter.id, item.value);
+                          }}
+                          className="text-muted-foreground hover:text-foreground"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                        {item.label}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-1 ml-auto pl-1">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        clearFilter(filter.id);
+                      }}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                    <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+                  </div>
+                </div>
+              ) : (
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="h-8 gap-1.5 px-2.5 text-xs font-medium"
+                >
+                  {filter.icon}
+                  <span className="hidden sm:inline">{filter.label}</span>
+                  <ChevronDown className="w-3 h-3 opacity-50" />
+                </Button>
+              )}
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="bg-popover z-50">
-              {filter.options.map((option) => (
-                <DropdownMenuItem
-                  key={option.value}
-                  onClick={() => handleFilterSelect(filter.id, option.value, option.label)}
-                  className={activeFilters[filter.id]?.value === option.value ? "bg-accent" : ""}
-                >
-                  {option.label}
-                </DropdownMenuItem>
-              ))}
+              {isMulti ? (
+                filter.options.map((option) => (
+                  <DropdownMenuCheckboxItem
+                    key={option.value}
+                    checked={selected.some(s => s.value === option.value)}
+                    onCheckedChange={(checked) => 
+                      handleMultiSelect(filter.id, option.value, option.label, checked)
+                    }
+                  >
+                    {option.label}
+                  </DropdownMenuCheckboxItem>
+                ))
+              ) : (
+                filter.options.map((option) => (
+                  <DropdownMenuCheckboxItem
+                    key={option.value}
+                    checked={selected.some(s => s.value === option.value)}
+                    onCheckedChange={() => handleSingleSelect(filter.id, option.value, option.label)}
+                  >
+                    {option.label}
+                  </DropdownMenuCheckboxItem>
+                ))
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         );
       })}
 
-      {/* Active Filter Badges */}
+      {/* Clear All */}
       {activeFilterCount > 0 && (
-        <>
-          <div className="h-4 w-px bg-border mx-1" />
-          {Object.entries(activeFilters).map(([filterId, { label }]) => {
-            const filter = filters.find(f => f.id === filterId);
-            return (
-              <Badge 
-                key={filterId} 
-                variant="secondary" 
-                className="h-7 gap-1 pl-2 pr-1 text-xs cursor-pointer hover:bg-secondary/80"
-              >
-                <span className="text-muted-foreground">{filter?.label}:</span>
-                <span>{label}</span>
-                <button 
-                  onClick={() => handleRemoveFilter(filterId)}
-                  className="ml-0.5 rounded-full p-0.5 hover:bg-muted"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </Badge>
-            );
-          })}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearAllFilters}
-            className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
-          >
-            Clear all
-          </Button>
-        </>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={clearAllFilters}
+          className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
+        >
+          Clear all
+        </Button>
       )}
     </div>
   );
