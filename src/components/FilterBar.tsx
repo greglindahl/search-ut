@@ -42,7 +42,6 @@ const filters: FilterConfig[] = [
     options: [
       { label: "Images", value: "images" },
       { label: "Videos", value: "videos" },
-      { label: "Documents", value: "documents" },
     ],
   },
   {
