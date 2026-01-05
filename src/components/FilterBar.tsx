@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, User, Calendar, FileType, Ratio, Users, FolderOpen, X, Search } from "lucide-react";
+import { ChevronDown, User, Calendar, Image, Ratio, Users, FolderOpen, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -37,7 +37,7 @@ const filters: FilterConfig[] = [
   {
     id: "content-type",
     label: "Type",
-    icon: <FileType className="w-4 h-4" />,
+    icon: <Image className="w-4 h-4" />,
     multiSelect: true,
     options: [
       { label: "Images", value: "images" },
