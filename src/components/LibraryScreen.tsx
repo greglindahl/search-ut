@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Folder, ChevronDown, Plus, Upload, Grid3X3, 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { FacetedSearchWithTypeahead } from "@/components/FacetedSearchWithTypeahead";
+import { FilterBar } from "@/components/FilterBar";
 import { useLibrarySearch } from "@/hooks/useLibrarySearch";
 import { getRelativeTime, LibraryAsset } from "@/lib/mockLibraryData";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -357,150 +358,52 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
               <FacetedSearchWithTypeahead onSearch={handleSearch} assets={allAssets} />
             </div>
 
-            {/* Filters and Controls */}
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-              <div className="flex flex-wrap items-center gap-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                      {creatorFilter === "all" ? "Creator" : creatorFilter}
-                      <ChevronDown className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => setCreatorFilter("all")}>All Creators</DropdownMenuItem>
-                    {uniqueCreators.map((creator) => (
-                      <DropdownMenuItem key={creator} onClick={() => setCreatorFilter(creator)}>
-                        {creator}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+            {/* Filters */}
+            <div className="mb-4">
+              <FilterBar />
+            </div>
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                      Date Range
-                      <ChevronDown className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>All Time</DropdownMenuItem>
-                    <DropdownMenuItem>Last 7 Days</DropdownMenuItem>
-                    <DropdownMenuItem>Last 30 Days</DropdownMenuItem>
-                    <DropdownMenuItem>Last Year</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                      {contentTypeFilter === "all" ? "Content Type" : contentTypeFilter === "image" ? "Images" : "Videos"}
-                      <ChevronDown className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => setContentTypeFilter("all")}>All</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setContentTypeFilter("image")}>Images</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setContentTypeFilter("video")}>Videos</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                      {aspectRatioFilter === "all" ? "Aspect Ratio" : aspectRatioFilter}
-                      <ChevronDown className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => setAspectRatioFilter("all")}>All Ratios</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setAspectRatioFilter("1:1")}>1:1</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setAspectRatioFilter("16:9")}>16:9</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setAspectRatioFilter("4:3")}>4:3</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setAspectRatioFilter("9:16")}>9:16</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                      {peopleFilter === "all" ? "People" : peopleFilter}
-                      <ChevronDown className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => setPeopleFilter("all")}>All</DropdownMenuItem>
-                    {uniquePeople.length > 0 ? (
-                      uniquePeople.map((person) => (
-                        <DropdownMenuItem key={person} onClick={() => setPeopleFilter(person)}>
-                          {person}
-                        </DropdownMenuItem>
-                      ))
-                    ) : (
-                      <DropdownMenuItem disabled>No people tagged</DropdownMenuItem>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                {(contentTypeFilter !== "all" || creatorFilter !== "all" || aspectRatioFilter !== "all" || peopleFilter !== "all") && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setContentTypeFilter("all");
-                      setCreatorFilter("all");
-                      setAspectRatioFilter("all");
-                      setPeopleFilter("all");
-                    }}
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Clear All
+            {/* Row 2: Asset Controls */}
+            <div className="flex items-center justify-end gap-2 mb-6">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    120 per Page
+                    <ChevronDown className="w-4 h-4" />
                   </Button>
-                )}
-              </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem>24 per Page</DropdownMenuItem>
+                  <DropdownMenuItem>48 per Page</DropdownMenuItem>
+                  <DropdownMenuItem>120 per Page</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-              <div className="flex items-center gap-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                      120 per Page
-                      <ChevronDown className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>24 per Page</DropdownMenuItem>
-                    <DropdownMenuItem>48 per Page</DropdownMenuItem>
-                    <DropdownMenuItem>120 per Page</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    Sort
+                    <ChevronDown className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem>Date (Newest)</DropdownMenuItem>
+                  <DropdownMenuItem>Date (Oldest)</DropdownMenuItem>
+                  <DropdownMenuItem>Name (A-Z)</DropdownMenuItem>
+                  <DropdownMenuItem>Name (Z-A)</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                      Sort
-                      <ChevronDown className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>Date (Newest)</DropdownMenuItem>
-                    <DropdownMenuItem>Date (Oldest)</DropdownMenuItem>
-                    <DropdownMenuItem>Name (A-Z)</DropdownMenuItem>
-                    <DropdownMenuItem>Name (Z-A)</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                <div className="flex items-center border rounded-md">
-                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-r-none">
-                    <Grid3X3 className="w-4 h-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-none border-x">
-                    <List className="w-4 h-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-l-none">
-                    <CheckSquare className="w-4 h-4" />
-                  </Button>
-                </div>
+              <div className="flex items-center border rounded-md">
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-r-none">
+                  <Grid3X3 className="w-4 h-4" />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-none border-x">
+                  <List className="w-4 h-4" />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-l-none">
+                  <CheckSquare className="w-4 h-4" />
+                </Button>
               </div>
             </div>
 
