@@ -233,7 +233,7 @@ export function FilterBar({ onFilterChange }: FilterBarProps) {
                     placeholder={`Search ${filter.label.toLowerCase()}...`}
                     value={searchQueries[filter.id] || ""}
                     onChange={(e) => setSearchQueries(prev => ({ ...prev, [filter.id]: e.target.value }))}
-                    className="h-7 pl-7 text-xs"
+                    className="h-7 pl-7 text-xs bg-white"
                     onClick={(e) => e.stopPropagation()}
                     onKeyDown={(e) => e.stopPropagation()}
                   />
