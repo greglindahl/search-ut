@@ -365,7 +365,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
               <div className="flex items-center gap-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium">
+                    <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-white">
                       120 per Page
                       <ChevronDown className="w-3 h-3 opacity-50" />
                     </Button>
@@ -379,7 +379,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium">
+                    <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-white">
                       Sort
                       <ChevronDown className="w-3 h-3 opacity-50" />
                     </Button>
@@ -392,7 +392,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                <div className="flex items-center border rounded-md">
+                <div className="flex items-center border rounded-md bg-white">
                   <Button variant="ghost" size="icon" className="h-8 w-8 rounded-r-none">
                     <Grid3X3 className="w-4 h-4" />
                   </Button>
