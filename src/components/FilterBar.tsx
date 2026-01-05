@@ -179,7 +179,7 @@ export function FilterBar({ onFilterChange }: FilterBarProps) {
           <DropdownMenu key={filter.id}>
             <DropdownMenuTrigger asChild>
               {isMulti && isActive ? (
-                <div className="inline-flex items-start gap-1 p-1.5 border border-input rounded-md bg-background min-w-[120px] max-w-[280px]">
+                <div className="inline-flex items-center gap-1 h-8 px-1.5 border border-input rounded-md bg-white min-w-[120px] max-w-[280px]">
                   <div className="flex flex-wrap gap-1 flex-1">
                     {selected.map((item) => (
                       <span
