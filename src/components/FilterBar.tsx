@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { ChevronDown, User, Calendar, FileType, Ratio, Users, FolderOpen, X } from "lucide-react";
+import { ChevronDown, User, Calendar, FileType, Ratio, Users, FolderOpen, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -96,6 +97,7 @@ interface FilterBarProps {
 
 export function FilterBar({ onFilterChange }: FilterBarProps) {
   const [activeFilters, setActiveFilters] = useState<Record<string, { value: string; label: string }[]>>({});
+  const [searchQueries, setSearchQueries] = useState<Record<string, string>>({});
 
   const handleMultiSelect = (filterId: string, value: string, label: string, checked: boolean) => {
     setActiveFilters(prev => {
@@ -223,30 +225,56 @@ export function FilterBar({ onFilterChange }: FilterBarProps) {
                 </Button>
               )}
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="bg-popover z-50">
-              {isMulti ? (
-                filter.options.map((option) => (
-                  <DropdownMenuCheckboxItem
-                    key={option.value}
-                    checked={selected.some(s => s.value === option.value)}
-                    onCheckedChange={(checked) => 
-                      handleMultiSelect(filter.id, option.value, option.label, checked)
-                    }
-                  >
-                    {option.label}
-                  </DropdownMenuCheckboxItem>
-                ))
-              ) : (
-                filter.options.map((option) => (
-                  <DropdownMenuCheckboxItem
-                    key={option.value}
-                    checked={selected.some(s => s.value === option.value)}
-                    onCheckedChange={() => handleSingleSelect(filter.id, option.value, option.label)}
-                  >
-                    {option.label}
-                  </DropdownMenuCheckboxItem>
-                ))
-              )}
+            <DropdownMenuContent align="start" className="bg-popover z-50 min-w-[200px]" onCloseAutoFocus={(e) => e.preventDefault()}>
+              {/* Search input */}
+              <div className="px-2 py-1.5">
+                <div className="relative">
+                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                  <Input
+                    placeholder={`Search ${filter.label.toLowerCase()}...`}
+                    value={searchQueries[filter.id] || ""}
+                    onChange={(e) => setSearchQueries(prev => ({ ...prev, [filter.id]: e.target.value }))}
+                    className="h-7 pl-7 text-xs"
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
+                  />
+                </div>
+              </div>
+              <div className="max-h-[200px] overflow-y-auto">
+                {filter.options
+                  .filter(option => 
+                    option.label.toLowerCase().includes((searchQueries[filter.id] || "").toLowerCase())
+                  )
+                  .map((option) => (
+                    isMulti ? (
+                      <DropdownMenuCheckboxItem
+                        key={option.value}
+                        checked={selected.some(s => s.value === option.value)}
+                        onCheckedChange={(checked) => 
+                          handleMultiSelect(filter.id, option.value, option.label, checked)
+                        }
+                      >
+                        {option.label}
+                      </DropdownMenuCheckboxItem>
+                    ) : (
+                      <DropdownMenuCheckboxItem
+                        key={option.value}
+                        checked={selected.some(s => s.value === option.value)}
+                        onCheckedChange={() => handleSingleSelect(filter.id, option.value, option.label)}
+                      >
+                        {option.label}
+                      </DropdownMenuCheckboxItem>
+                    )
+                  ))
+                }
+                {filter.options.filter(option => 
+                  option.label.toLowerCase().includes((searchQueries[filter.id] || "").toLowerCase())
+                ).length === 0 && (
+                  <div className="px-2 py-1.5 text-xs text-muted-foreground text-center">
+                    No results found
+                  </div>
+                )}
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
         );
