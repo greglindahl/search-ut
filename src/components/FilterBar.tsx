@@ -224,7 +224,7 @@ export function FilterBar({ onFilterChange }: FilterBarProps) {
                 </Button>
               )}
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="bg-popover z-50 min-w-[200px]" onCloseAutoFocus={(e) => e.preventDefault()}>
+            <DropdownMenuContent align="start" className="bg-white z-50 min-w-[200px]" onCloseAutoFocus={(e) => e.preventDefault()}>
               {/* Search input */}
               <div className="px-2 py-1.5">
                 <div className="relative">
