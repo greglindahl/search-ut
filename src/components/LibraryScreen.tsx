@@ -359,7 +359,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
             </div>
 
             {/* Filters and Controls - Single Row */}
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6 bg-white p-3 rounded-lg">
               <FilterBar />
 
               <div className="flex items-center gap-2">
