@@ -358,52 +358,51 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
               <FacetedSearchWithTypeahead onSearch={handleSearch} assets={allAssets} />
             </div>
 
-            {/* Filters */}
-            <div className="mb-4">
+            {/* Filters and Controls - Single Row */}
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
               <FilterBar />
-            </div>
 
-            {/* Row 2: Asset Controls */}
-            <div className="flex items-center justify-end gap-2 mb-6">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    120 per Page
-                    <ChevronDown className="w-4 h-4" />
+              <div className="flex items-center gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium">
+                      120 per Page
+                      <ChevronDown className="w-3 h-3 opacity-50" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>24 per Page</DropdownMenuItem>
+                    <DropdownMenuItem>48 per Page</DropdownMenuItem>
+                    <DropdownMenuItem>120 per Page</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium">
+                      Sort
+                      <ChevronDown className="w-3 h-3 opacity-50" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>Date (Newest)</DropdownMenuItem>
+                    <DropdownMenuItem>Date (Oldest)</DropdownMenuItem>
+                    <DropdownMenuItem>Name (A-Z)</DropdownMenuItem>
+                    <DropdownMenuItem>Name (Z-A)</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <div className="flex items-center border rounded-md">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-r-none">
+                    <Grid3X3 className="w-4 h-4" />
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>24 per Page</DropdownMenuItem>
-                  <DropdownMenuItem>48 per Page</DropdownMenuItem>
-                  <DropdownMenuItem>120 per Page</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    Sort
-                    <ChevronDown className="w-4 h-4" />
+                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-none border-x">
+                    <List className="w-4 h-4" />
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>Date (Newest)</DropdownMenuItem>
-                  <DropdownMenuItem>Date (Oldest)</DropdownMenuItem>
-                  <DropdownMenuItem>Name (A-Z)</DropdownMenuItem>
-                  <DropdownMenuItem>Name (Z-A)</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <div className="flex items-center border rounded-md">
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-r-none">
-                  <Grid3X3 className="w-4 h-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-none border-x">
-                  <List className="w-4 h-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-l-none">
-                  <CheckSquare className="w-4 h-4" />
-                </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-l-none">
+                    <CheckSquare className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
             </div>
 
