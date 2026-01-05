@@ -216,7 +216,7 @@ export function FilterBar({ onFilterChange }: FilterBarProps) {
                 <Button 
                   variant="outline"
                   size="sm"
-                  className="h-8 gap-1.5 px-2.5 text-xs font-medium"
+                  className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-white"
                 >
                   {filter.icon}
                   <span className="hidden sm:inline">{filter.label}</span>
