@@ -308,7 +308,7 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
           onFocus={handleInputFocus}
           onKeyDown={handleKeyDown}
           placeholder="Search by keyword, tag, player, team, season etc."
-          className="pl-10 pr-10 w-full bg-background"
+          className="pl-10 pr-10 w-full bg-white"
         />
         {(searchQuery || selectedFacets.length > 0) && (
           <button
