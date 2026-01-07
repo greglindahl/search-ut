@@ -344,13 +344,18 @@ function matchesDateFilter(date: Date, filter: string): boolean {
 // Search and filter function
 export function searchAssets(assets: LibraryAsset[], filters: SearchFilters): LibraryAsset[] {
   return assets.filter((asset) => {
-    // Text query search
+    // Text query search - supports multiple words (AND logic)
     if (filters.query) {
-      const q = filters.query.toLowerCase();
-      const matchesName = asset.name.toLowerCase().includes(q);
-      const matchesCreator = asset.creator.toLowerCase().includes(q);
-      const matchesTags = asset.tags.some((t) => t.toLowerCase().includes(q));
-      if (!matchesName && !matchesCreator && !matchesTags) return false;
+      const searchTerms = filters.query.toLowerCase().split(/\s+/).filter(term => term.length > 0);
+      const assetText = [
+        asset.name.toLowerCase(),
+        asset.creator.toLowerCase(),
+        ...asset.tags.map(t => t.toLowerCase())
+      ].join(' ');
+      
+      // All search terms must be found somewhere in the asset's searchable text
+      const allTermsMatch = searchTerms.every(term => assetText.includes(term));
+      if (!allTermsMatch) return false;
     }
 
     // Creator filter
