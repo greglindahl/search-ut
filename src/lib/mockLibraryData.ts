@@ -187,6 +187,43 @@ const fixedAssets: LibraryAsset[] = [
     fileSize: "3.8 MB",
     dimensions: "1920x1080",
   },
+  // Task B: Time Pressure + Accuracy - Player X action with Sponsor Y branding
+  {
+    id: "asset-action-sponsor-1",
+    name: "Lebron James Dunk with Gatorade Courtside.jpg",
+    creator: "Jane Doe",
+    creatorId: "jane",
+    type: "image",
+    dateCreated: (() => {
+      const recent = new Date();
+      recent.setDate(recent.getDate() - 3); // 3 days ago
+      recent.setHours(20, 15, 0, 0);
+      return recent;
+    })(),
+    aspectRatio: "16:9",
+    status: "approved",
+    tags: ["Lebron James", "Lakers", "dunk", "slam dunk", "action", "celebration", "Gatorade", "Sponsor Y", "courtside", "basketball", "NBA", "branding"],
+    fileSize: "5.1 MB",
+    dimensions: "3840x2160",
+  },
+  {
+    id: "asset-action-sponsor-2",
+    name: "Lebron James Celebration Nike Banner.jpg",
+    creator: "Alex Johnson",
+    creatorId: "alex",
+    type: "image",
+    dateCreated: (() => {
+      const recent = new Date();
+      recent.setDate(recent.getDate() - 5); // 5 days ago
+      recent.setHours(21, 30, 0, 0);
+      return recent;
+    })(),
+    aspectRatio: "16:9",
+    status: "approved",
+    tags: ["Lebron James", "Lakers", "celebration", "fist pump", "action", "Nike", "Sponsor Y", "basketball", "NBA", "branding", "victory"],
+    fileSize: "4.8 MB",
+    dimensions: "1920x1080",
+  },
 ];
 
 // Generate 80 mock assets with good distribution of tags
