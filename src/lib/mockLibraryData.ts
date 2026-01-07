@@ -224,6 +224,75 @@ const fixedAssets: LibraryAsset[] = [
     fileSize: "4.8 MB",
     dimensions: "1920x1080",
   },
+  // Additional Lebron + Nike assets for filter testing
+  {
+    id: "asset-lebron-nike-3",
+    name: "Lebron James Nike Swoosh Portrait.jpg",
+    creator: "John Smith",
+    creatorId: "john",
+    type: "image",
+    dateCreated: (() => {
+      const d = new Date();
+      d.setDate(d.getDate() - 7);
+      return d;
+    })(),
+    aspectRatio: "1:1",
+    status: "approved",
+    tags: ["Lebron James", "Lakers", "Nike", "portrait", "basketball", "NBA"],
+    fileSize: "2.1 MB",
+    dimensions: "1080x1080",
+  },
+  {
+    id: "asset-lebron-nike-4",
+    name: "Lebron James Nike Ad Campaign.jpg",
+    creator: "Jane Doe",
+    creatorId: "jane",
+    type: "image",
+    dateCreated: (() => {
+      const d = new Date();
+      d.setDate(d.getDate() - 10);
+      return d;
+    })(),
+    aspectRatio: "9:16",
+    status: "approved",
+    tags: ["Lebron James", "Lakers", "Nike", "advertisement", "vertical", "basketball", "NBA"],
+    fileSize: "1.8 MB",
+    dimensions: "1080x1920",
+  },
+  {
+    id: "asset-lebron-nike-5",
+    name: "Lebron James Nike Warmup Jacket.jpg",
+    creator: "Alex Johnson",
+    creatorId: "alex",
+    type: "image",
+    dateCreated: (() => {
+      const d = new Date();
+      d.setDate(d.getDate() - 14);
+      return d;
+    })(),
+    aspectRatio: "4:3",
+    status: "approved",
+    tags: ["Lebron James", "Lakers", "Nike", "warmup", "pregame", "basketball", "NBA"],
+    fileSize: "3.2 MB",
+    dimensions: "1600x1200",
+  },
+  {
+    id: "asset-lebron-nike-6",
+    name: "Lebron James Nike Shoe Close-up.jpg",
+    creator: "John Smith",
+    creatorId: "john",
+    type: "image",
+    dateCreated: (() => {
+      const d = new Date();
+      d.setDate(d.getDate() - 2);
+      return d;
+    })(),
+    aspectRatio: "16:9",
+    status: "pending",
+    tags: ["Lebron James", "Lakers", "Nike", "shoes", "product", "basketball", "NBA"],
+    fileSize: "2.9 MB",
+    dimensions: "1920x1080",
+  },
 ];
 
 // Generate 80 mock assets with good distribution of tags
