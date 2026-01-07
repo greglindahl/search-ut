@@ -100,6 +100,28 @@ function randomFromArray<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+// Fixed assets for user testing scenarios
+const fixedAssets: LibraryAsset[] = [
+  {
+    id: "asset-hero-1",
+    name: "Lebron James Game Action vs Celtics.jpg",
+    creator: "Jane Doe",
+    creatorId: "jane",
+    type: "image",
+    dateCreated: (() => {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      yesterday.setHours(22, 45, 0, 0); // Last night at 10:45 PM
+      return yesterday;
+    })(),
+    aspectRatio: "16:9",
+    status: "approved",
+    tags: ["Lebron James", "Lakers", "game action", "basketball", "NBA", "dunk"],
+    fileSize: "4.2 MB",
+    dimensions: "3840x2160",
+  },
+];
+
 // Generate 80 mock assets with good distribution of tags
 export const mockLibraryAssets: LibraryAsset[] = (() => {
   // Use a simple seeded random for consistent results
@@ -164,7 +186,8 @@ export const mockLibraryAssets: LibraryAsset[] = (() => {
     };
   };
   
-  return Array.from({ length: 80 }, (_, i) => generateSeededAsset(i + 1));
+  // Combine fixed assets with generated ones
+  return [...fixedAssets, ...Array.from({ length: 80 }, (_, i) => generateSeededAsset(i + 1))];
 })();
 
 // Helper to get relative time string
