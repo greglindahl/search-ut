@@ -29,9 +29,9 @@ const filters: FilterConfig[] = [
     icon: <User className="w-4 h-4" />,
     multiSelect: true,
     options: [
-      { label: "John Smith", value: "John Smith" },
-      { label: "Jane Doe", value: "Jane Doe" },
-      { label: "Alex Johnson", value: "Alex Johnson" },
+      { label: "John Smith", value: "john" },
+      { label: "Jane Doe", value: "jane" },
+      { label: "Alex Johnson", value: "alex" },
     ],
   },
   {
