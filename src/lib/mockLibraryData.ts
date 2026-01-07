@@ -102,6 +102,7 @@ function randomFromArray<T>(arr: T[]): T {
 
 // Fixed assets for user testing scenarios
 const fixedAssets: LibraryAsset[] = [
+  // Task A1: Known-Item, Time-Sensitive - Lebron from last night
   {
     id: "asset-hero-1",
     name: "Lebron James Game Action vs Celtics.jpg",
@@ -119,6 +120,25 @@ const fixedAssets: LibraryAsset[] = [
     tags: ["Lebron James", "Lakers", "game action", "basketball", "NBA", "dunk"],
     fileSize: "4.2 MB",
     dimensions: "3840x2160",
+  },
+  // Task A2: Partial Memory / Uncertain Metadata - Last season with Sponsor Y
+  {
+    id: "asset-sponsor-1",
+    name: "Lakers Courtside Sponsor Feature.jpg",
+    creator: "Alex Johnson",
+    creatorId: "alex",
+    type: "image",
+    dateCreated: (() => {
+      const lastSeason = new Date();
+      lastSeason.setMonth(lastSeason.getMonth() - 4); // ~4 months ago
+      lastSeason.setHours(19, 30, 0, 0);
+      return lastSeason;
+    })(),
+    aspectRatio: "16:9",
+    status: "approved",
+    tags: ["Lakers", "Sponsor Y", "courtside", "basketball", "NBA", "sponsor", "branding"],
+    fileSize: "3.8 MB",
+    dimensions: "1920x1080",
   },
 ];
 
