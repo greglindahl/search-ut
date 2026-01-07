@@ -427,26 +427,45 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {filteredResults.map((asset) => (
-                  <div key={asset.id} className="group cursor-pointer">
-                    <div className="aspect-[4/3] border rounded-lg bg-muted/30 flex flex-col items-center justify-center mb-2 hover:border-primary/50 transition-colors relative overflow-hidden">
-                      <AssetTypeIcon type={asset.type} className="w-8 h-8 text-muted-foreground/50" />
-                      {asset.dimensions && (
-                        <span className="text-[10px] text-muted-foreground/50 mt-1">{asset.dimensions}</span>
-                      )}
+                  <div key={asset.id} className="group cursor-pointer bg-card rounded-xl border shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                    {/* Thumbnail area */}
+                    <div className="aspect-[4/3] bg-muted/50 flex items-center justify-center relative">
+                      <AssetTypeIcon type={asset.type} className="w-10 h-10 text-muted-foreground/40" />
+                      {/* Metadata badges */}
+                      <div className="absolute bottom-2 right-2 flex items-center gap-1.5">
+                        {asset.aspectRatio && (
+                          <span className="text-[10px] font-medium text-muted-foreground bg-background/90 px-1.5 py-0.5 rounded">
+                            {asset.aspectRatio}
+                          </span>
+                        )}
+                        <span className="text-[10px] font-medium text-muted-foreground bg-background/90 px-1.5 py-0.5 rounded uppercase">
+                          {asset.type}
+                        </span>
+                      </div>
                       {asset.duration && (
-                        <span className="absolute bottom-2 right-2 text-[10px] bg-background/80 px-1 rounded">{asset.duration}</span>
+                        <span className="absolute bottom-2 left-2 text-[10px] font-medium text-muted-foreground bg-background/90 px-1.5 py-0.5 rounded">
+                          {asset.duration}
+                        </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-1.5 text-sm">
-                      <AssetTypeIcon type={asset.type} className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                      <span className="truncate">{asset.name}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground mt-0.5">
-                      <span className="truncate">{asset.creator}</span>
-                      <span className="flex-shrink-0">{getRelativeTime(asset.dateCreated)}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 mt-1">
-                      <span className="text-[10px] text-muted-foreground">{asset.fileSize}</span>
+                    {/* Card info */}
+                    <div className="p-3">
+                      <div className="font-medium text-sm truncate mb-1">{asset.name}</div>
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="text-[10px] uppercase tracking-wide text-muted-foreground truncate">
+                            {asset.creator}
+                          </div>
+                          {asset.tags.length > 0 && (
+                            <div className="text-xs text-primary truncate">
+                              {asset.tags[0]}
+                            </div>
+                          )}
+                        </div>
+                        <span className="text-xs text-primary flex-shrink-0">
+                          {getRelativeTime(asset.dateCreated)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 ))}
