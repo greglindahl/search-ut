@@ -136,7 +136,7 @@ const fixedAssets: LibraryAsset[] = [
     })(),
     aspectRatio: "16:9",
     status: "approved",
-    tags: ["Lakers", "Sponsor Y", "courtside", "basketball", "NBA", "sponsor", "branding"],
+    tags: ["Lakers", "Sponsor Y", "Gatorade", "Nike", "adidas", "courtside", "basketball", "NBA", "sponsor", "branding"],
     fileSize: "3.8 MB",
     dimensions: "1920x1080",
   },
