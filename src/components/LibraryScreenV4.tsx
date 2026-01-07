@@ -101,6 +101,11 @@ export function LibraryScreenV4({ isMobile = false }: LibraryScreenV4Props) {
   const [activeFolder, setActiveFolder] = useState("all");
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   
+  // Track search query and filter bar state separately
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchFacets, setSearchFacets] = useState<string[]>([]);
+  const [filterBarState, setFilterBarState] = useState<Record<string, string[]>>({});
+  
   // Auto-expand/collapse sidebar based on active tab
   useEffect(() => {
     setIsFolderSidebarExpanded(activeTab === "folders");
@@ -109,16 +114,59 @@ export function LibraryScreenV4({ isMobile = false }: LibraryScreenV4Props) {
   // Use the library search hook
   const { results, allAssets, isLoading, totalCount, search } = useLibrarySearch();
 
-  // Handle search from FacetedSearch component
-  const handleSearch = useCallback((query: string, selectedFacets: string[]) => {
-    // Convert string facets to facet objects for the search hook
-    const facets = selectedFacets.map(facet => ({
+  // Combined search that merges search facets with filter bar state
+  const triggerSearch = useCallback((query: string, facets: string[], filters: Record<string, string[]>) => {
+    // Convert string facets from search to facet objects
+    const searchFacetObjs = facets.map(facet => ({
       field: "tag",
       value: facet.toLowerCase(),
       label: facet,
     }));
-    search(query, facets);
+
+    // Convert filter bar state to facet objects
+    const filterFacetObjs: { field: string; value: string; label: string }[] = [];
+    
+    Object.entries(filters).forEach(([filterId, values]) => {
+      values.forEach(value => {
+        // Map filter IDs to facet fields
+        let field = filterId;
+        if (filterId === "content-type") field = "type";
+        if (filterId === "aspect-ratio") field = "aspect";
+        if (filterId === "date-range") field = "date";
+        
+        filterFacetObjs.push({
+          field,
+          value,
+          label: value,
+        });
+      });
+    });
+
+    const allFacets = [...searchFacetObjs, ...filterFacetObjs];
+    search(query, allFacets);
   }, [search]);
+
+  // Handle search from FacetedSearch component
+  const handleSearch = useCallback((query: string, selectedFacets: string[]) => {
+    setSearchQuery(query);
+    setSearchFacets(selectedFacets);
+    triggerSearch(query, selectedFacets, filterBarState);
+  }, [triggerSearch, filterBarState]);
+
+  // Handle filter bar changes
+  const handleFilterChange = useCallback((filterId: string, values: string[]) => {
+    setFilterBarState(prev => {
+      const newState = { ...prev };
+      if (values.length === 0) {
+        delete newState[filterId];
+      } else {
+        newState[filterId] = values;
+      }
+      // Trigger search with updated filters
+      triggerSearch(searchQuery, searchFacets, newState);
+      return newState;
+    });
+  }, [triggerSearch, searchQuery, searchFacets]);
 
   const toggleFolderExpand = (folderId: string) => {
     setExpandedFolders((prev) => {
@@ -299,7 +347,7 @@ export function LibraryScreenV4({ isMobile = false }: LibraryScreenV4Props) {
 
             {/* Filters */}
             <div className="mb-4">
-              <FilterBar />
+              <FilterBar onFilterChange={handleFilterChange} />
             </div>
 
             {/* Row 2: Asset Controls */}
