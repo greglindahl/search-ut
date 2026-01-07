@@ -167,8 +167,8 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
       // Content type filter
       if (contentTypeFilter.length && !contentTypeFilter.includes(asset.type)) return false;
 
-      // Creator filter
-      if (creatorFilter.length && !creatorFilter.includes(asset.creator)) return false;
+      // Creator filter (FilterBar returns creatorId values)
+      if (creatorFilter.length && !creatorFilter.includes(asset.creatorId)) return false;
 
       // Aspect ratio filter
       if (aspectRatioFilter && asset.aspectRatio !== aspectRatioFilter) return false;
