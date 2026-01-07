@@ -1,4 +1,5 @@
 // Mock library data for realistic search testing
+import Fuse from 'fuse.js';
 
 export interface LibraryAsset {
   id: string;
@@ -674,23 +675,33 @@ function matchesDateFilter(date: Date, filter: string): boolean {
   }
 }
 
-// Search and filter function
-export function searchAssets(assets: LibraryAsset[], filters: SearchFilters): LibraryAsset[] {
-  return assets.filter((asset) => {
-    // Text query search - supports multiple words (AND logic)
-    if (filters.query) {
-      const searchTerms = filters.query.toLowerCase().split(/\s+/).filter(term => term.length > 0);
-      const assetText = [
-        asset.name.toLowerCase(),
-        asset.creator.toLowerCase(),
-        ...asset.tags.map(t => t.toLowerCase())
-      ].join(' ');
-      
-      // All search terms must be found somewhere in the asset's searchable text
-      const allTermsMatch = searchTerms.every(term => assetText.includes(term));
-      if (!allTermsMatch) return false;
-    }
+// Fuse.js configuration for fuzzy search
+const fuseOptions = {
+  keys: [
+    { name: 'name', weight: 0.4 },
+    { name: 'creator', weight: 0.2 },
+    { name: 'tags', weight: 0.4 }
+  ],
+  threshold: 0.4, // 0 = exact match, 1 = match anything
+  distance: 100, // How close the match must be to the fuzzy location
+  ignoreLocation: true, // Search the entire string
+  includeScore: true,
+  minMatchCharLength: 2,
+};
 
+// Search and filter function with fuzzy search support
+export function searchAssets(assets: LibraryAsset[], filters: SearchFilters): LibraryAsset[] {
+  let results = assets;
+
+  // Apply fuzzy text search if query exists
+  if (filters.query && filters.query.trim().length > 0) {
+    const fuse = new Fuse(assets, fuseOptions);
+    const fuseResults = fuse.search(filters.query.trim());
+    results = fuseResults.map(result => result.item);
+  }
+
+  // Apply additional filters
+  return results.filter((asset) => {
     // Creator filter
     if (filters.creator?.length) {
       if (!filters.creator.includes(asset.creatorId)) return false;
