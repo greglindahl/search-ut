@@ -118,22 +118,26 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
   const [isFolderSidebarExpanded, setIsFolderSidebarExpanded] = useState(false);
   const [activeFolder, setActiveFolder] = useState("all");
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
-  
+
   // Auto-expand/collapse sidebar based on active tab
   useEffect(() => {
     setIsFolderSidebarExpanded(activeTab === "folders");
   }, [activeTab]);
-  const [contentTypeFilter, setContentTypeFilter] = useState<"all" | "image" | "video">("all");
-  const [creatorFilter, setCreatorFilter] = useState<string>("all");
-  const [aspectRatioFilter, setAspectRatioFilter] = useState<string>("all");
-  const [peopleFilter, setPeopleFilter] = useState<string>("all");
-  
+
+  // Filter state (driven by FilterBar)
+  const [contentTypeFilter, setContentTypeFilter] = useState<Array<LibraryAsset["type"]>>([]);
+  const [creatorFilter, setCreatorFilter] = useState<string[]>([]);
+  const [aspectRatioFilter, setAspectRatioFilter] = useState<LibraryAsset["aspectRatio"] | null>(null);
+  const [peopleFilter, setPeopleFilter] = useState<string[]>([]);
+  const [folderFilter, setFolderFilter] = useState<string[]>([]);
+  const [dateRangeFilter, setDateRangeFilter] = useState<"today" | "week" | "month" | "year" | null>(null);
+
   // Use the library search hook
   const { results, allAssets, isLoading, totalCount, search } = useLibrarySearch();
 
   // Get unique creators and people from all assets
   const uniqueCreators = useMemo(() => {
-    const creators = new Set(allAssets.map(a => a.creator));
+    const creators = new Set(allAssets.map((a) => a.creator));
     return Array.from(creators).sort();
   }, [allAssets]);
 
@@ -141,10 +145,15 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
   const uniquePeople = useMemo(() => {
     const people = new Set<string>();
     const excludedItems = ["looking at camera", "slam dunk", "Red Sox", "three pointer"];
-    allAssets.forEach(asset => {
-      asset.tags.forEach(tag => {
+    allAssets.forEach((asset) => {
+      asset.tags.forEach((tag) => {
         // Consider tags with spaces as potential people names, exclude non-people items
-        if (tag.includes(" ") && !tag.includes("(") && !tag.toLowerCase().includes("shot") && !excludedItems.includes(tag)) {
+        if (
+          tag.includes(" ") &&
+          !tag.includes("(") &&
+          !tag.toLowerCase().includes("shot") &&
+          !excludedItems.includes(tag)
+        ) {
           people.add(tag);
         }
       });
@@ -154,32 +163,101 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
 
   // Filter results by all active filters
   const filteredResults = useMemo(() => {
-    return results.filter(asset => {
+    return results.filter((asset) => {
       // Content type filter
-      if (contentTypeFilter !== "all" && asset.type !== contentTypeFilter) return false;
+      if (contentTypeFilter.length && !contentTypeFilter.includes(asset.type)) return false;
+
       // Creator filter
-      if (creatorFilter !== "all" && asset.creator !== creatorFilter) return false;
+      if (creatorFilter.length && !creatorFilter.includes(asset.creator)) return false;
+
       // Aspect ratio filter
-      if (aspectRatioFilter !== "all" && asset.aspectRatio !== aspectRatioFilter) return false;
-      // People filter (check tags)
-      if (peopleFilter !== "all" && !asset.tags.some(t => t.toLowerCase() === peopleFilter.toLowerCase())) return false;
+      if (aspectRatioFilter && asset.aspectRatio !== aspectRatioFilter) return false;
+
+      // People filter (check tags) - match any selected person
+      if (peopleFilter.length) {
+        const lowerTags = asset.tags.map((t) => t.toLowerCase());
+        const matchesAny = peopleFilter.some((p) => lowerTags.includes(p.toLowerCase()));
+        if (!matchesAny) return false;
+      }
+
+      // Date range filter
+      if (dateRangeFilter) {
+        const now = new Date();
+        const diffDays = Math.floor((now.getTime() - asset.dateCreated.getTime()) / 86400000);
+        const matches =
+          dateRangeFilter === "today"
+            ? diffDays === 0
+            : dateRangeFilter === "week"
+              ? diffDays <= 7
+              : dateRangeFilter === "month"
+                ? diffDays <= 30
+                : diffDays <= 365;
+        if (!matches) return false;
+      }
+
+      // Folder/Season filter (simple year-based mapping)
+      if (folderFilter.length) {
+        const year = asset.dateCreated.getFullYear();
+        const matchesAny = folderFilter.some((f) => {
+          if (f === "season-2025") return year === 2025;
+          if (f === "season-2024") return year === 2024;
+          if (f === "archive") return year <= 2023;
+          return true;
+        });
+        if (!matchesAny) return false;
+      }
+
       return true;
     });
-  }, [results, contentTypeFilter, creatorFilter, aspectRatioFilter, peopleFilter]);
+  }, [
+    results,
+    contentTypeFilter,
+    creatorFilter,
+    aspectRatioFilter,
+    peopleFilter,
+    folderFilter,
+    dateRangeFilter,
+  ]);
 
   // Compute dynamic filter counts based on current results
   const filterCounts = useMemo(() => computeFilterCounts(filteredResults), [filteredResults]);
 
   // Handle search from FacetedSearch component
-  const handleSearch = useCallback((query: string, selectedFacets: string[]) => {
-    // Convert string facets to facet objects for the search hook
-    const facets = selectedFacets.map(facet => ({
-      field: "tag",
-      value: facet.toLowerCase(),
-      label: facet,
-    }));
-    search(query, facets);
-  }, [search]);
+  const handleSearch = useCallback(
+    (query: string, selectedFacets: string[]) => {
+      // Convert string facets to facet objects for the search hook
+      const facets = selectedFacets.map((facet) => ({
+        field: "tag",
+        value: facet.toLowerCase(),
+        label: facet,
+      }));
+      search(query, facets);
+    },
+    [search]
+  );
+
+  const handleFilterChange = useCallback((filterId: string, values: string[]) => {
+    switch (filterId) {
+      case "creator":
+        setCreatorFilter(values);
+        break;
+      case "content-type":
+        setContentTypeFilter(values as Array<LibraryAsset["type"]>);
+        break;
+      case "aspect-ratio":
+        setAspectRatioFilter((values[0] as LibraryAsset["aspectRatio"]) ?? null);
+        break;
+      case "people":
+        setPeopleFilter(values);
+        break;
+      case "folders":
+        setFolderFilter(values);
+        break;
+      case "date-range":
+        setDateRangeFilter((values[0] as "today" | "week" | "month" | "year") ?? null);
+        break;
+    }
+  }, []);
 
   const toggleFolderExpand = (folderId: string) => {
     setExpandedFolders((prev) => {
@@ -360,7 +438,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
 
             {/* Filters and Controls - Single Row */}
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-              <FilterBar />
+              <FilterBar onFilterChange={handleFilterChange} />
 
               <div className="flex items-center gap-2">
                 <DropdownMenu>

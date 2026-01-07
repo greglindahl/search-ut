@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { mockLibraryAssets, searchAssets, LibraryAsset, SearchFilters } from "@/lib/mockLibraryData";
 
 interface Facet {
@@ -58,25 +58,45 @@ export function useLibrarySearch(): UseLibrarySearchResult {
   const [isLoading, setIsLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(mockLibraryAssets.length);
 
+  const timeoutRef = useRef<number | null>(null);
+  const requestIdRef = useRef(0);
+
   // Initial load
   useEffect(() => {
     setResults(mockLibraryAssets);
     setTotalCount(mockLibraryAssets.length);
+
+    return () => {
+      if (timeoutRef.current) {
+        window.clearTimeout(timeoutRef.current);
+      }
+    };
   }, []);
 
   const search = useCallback((query: string, facets: Facet[]) => {
+    requestIdRef.current += 1;
+    const requestId = requestIdRef.current;
+
     setIsLoading(true);
+
+    // Cancel any in-flight simulated request
+    if (timeoutRef.current) {
+      window.clearTimeout(timeoutRef.current);
+    }
 
     // Simulate API delay
     const delay = getRandomDelay();
-    
-    setTimeout(() => {
+
+    timeoutRef.current = window.setTimeout(() => {
+      // Ignore stale results
+      if (requestId !== requestIdRef.current) return;
+
       const filters = facetsToFilters(query, facets);
       const searchResults = searchAssets(mockLibraryAssets, filters);
-      
+
       // Sort by date (newest first)
       searchResults.sort((a, b) => b.dateCreated.getTime() - a.dateCreated.getTime());
-      
+
       setResults(searchResults);
       setTotalCount(searchResults.length);
       setIsLoading(false);

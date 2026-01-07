@@ -29,9 +29,9 @@ const filters: FilterConfig[] = [
     icon: <User className="w-4 h-4" />,
     multiSelect: true,
     options: [
-      { label: "Creator 1", value: "creator-1" },
-      { label: "Creator 2", value: "creator-2" },
-      { label: "Creator 3", value: "creator-3" },
+      { label: "John Smith", value: "John Smith" },
+      { label: "Jane Doe", value: "Jane Doe" },
+      { label: "Alex Johnson", value: "Alex Johnson" },
     ],
   },
   {
@@ -40,8 +40,8 @@ const filters: FilterConfig[] = [
     icon: <Image className="w-4 h-4" />,
     multiSelect: true,
     options: [
-      { label: "Images", value: "images" },
-      { label: "Videos", value: "videos" },
+      { label: "Image", value: "image" },
+      { label: "Video", value: "video" },
     ],
   },
   {
@@ -50,8 +50,11 @@ const filters: FilterConfig[] = [
     icon: <Users className="w-4 h-4" />,
     multiSelect: true,
     options: [
-      { label: "Person 1", value: "person-1" },
-      { label: "Person 2", value: "person-2" },
+      { label: "Lebron James", value: "Lebron James" },
+      { label: "Steph Curry", value: "Steph Curry" },
+      { label: "Kevin Durant", value: "Kevin Durant" },
+      { label: "Giannis Antetokounmpo", value: "Giannis Antetokounmpo" },
+      { label: "Luka Doncic", value: "Luka Doncic" },
     ],
   },
   {
@@ -70,10 +73,10 @@ const filters: FilterConfig[] = [
     label: "Date",
     icon: <Calendar className="w-4 h-4" />,
     options: [
-      { label: "All Time", value: "all" },
-      { label: "Last 7 Days", value: "7d" },
-      { label: "Last 30 Days", value: "30d" },
-      { label: "Last Year", value: "1y" },
+      { label: "Today", value: "today" },
+      { label: "Last 7 Days", value: "week" },
+      { label: "Last 30 Days", value: "month" },
+      { label: "Last Year", value: "year" },
     ],
   },
   {
