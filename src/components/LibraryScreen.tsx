@@ -127,7 +127,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
   // Filter state (driven by FilterBar)
   const [contentTypeFilter, setContentTypeFilter] = useState<Array<LibraryAsset["type"]>>([]);
   const [creatorFilter, setCreatorFilter] = useState<string[]>([]);
-  const [aspectRatioFilter, setAspectRatioFilter] = useState<LibraryAsset["aspectRatio"] | null>(null);
+  const [aspectRatioFilter, setAspectRatioFilter] = useState<LibraryAsset["aspectRatio"][]>([]);
   const [peopleFilter, setPeopleFilter] = useState<string[]>([]);
   const [folderFilter, setFolderFilter] = useState<string[]>([]);
   const [dateRangeFilter, setDateRangeFilter] = useState<"today" | "week" | "month" | "year" | null>(null);
@@ -170,8 +170,8 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
       // Creator filter (FilterBar returns creatorId values)
       if (creatorFilter.length && !creatorFilter.includes(asset.creatorId)) return false;
 
-      // Aspect ratio filter
-      if (aspectRatioFilter && asset.aspectRatio !== aspectRatioFilter) return false;
+      // Aspect ratio filter (multi-select)
+      if (aspectRatioFilter.length && !aspectRatioFilter.includes(asset.aspectRatio)) return false;
 
       // People filter (check tags) - match any selected person
       if (peopleFilter.length) {
@@ -245,7 +245,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
         setContentTypeFilter(values as Array<LibraryAsset["type"]>);
         break;
       case "aspect-ratio":
-        setAspectRatioFilter((values[0] as LibraryAsset["aspectRatio"]) ?? null);
+        setAspectRatioFilter(values as LibraryAsset["aspectRatio"][]);
         break;
       case "people":
         setPeopleFilter(values);
