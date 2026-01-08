@@ -76,7 +76,9 @@ const filters: FilterConfig[] = [
       { label: "Today", value: "today" },
       { label: "Last 7 Days", value: "week" },
       { label: "Last 30 Days", value: "month" },
+      { label: "Last 90 Days", value: "quarter" },
       { label: "Last Year", value: "year" },
+      { label: "Custom", value: "custom" },
     ],
   },
   {
