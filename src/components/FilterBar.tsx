@@ -235,11 +235,14 @@ export function FilterBar({ onFilterChange, onCustomDateChange }: FilterBarProps
                         className="inline-flex items-center gap-1 px-2 py-0.5 bg-muted rounded text-xs"
                       >
                         <button
+                          type="button"
+                          onPointerDown={(e) => e.stopPropagation()}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleRemoveValue(filter.id, item.value);
                           }}
                           className="text-muted-foreground hover:text-foreground"
+                          aria-label={`Remove ${filter.label} filter: ${item.label}`}
                         >
                           <X className="w-3 h-3" />
                         </button>
@@ -249,11 +252,14 @@ export function FilterBar({ onFilterChange, onCustomDateChange }: FilterBarProps
                   </div>
                   <div className="flex items-center gap-1 ml-auto pl-1">
                     <button
+                      type="button"
+                      onPointerDown={(e) => e.stopPropagation()}
                       onClick={(e) => {
                         e.stopPropagation();
                         clearFilter(filter.id);
                       }}
                       className="text-muted-foreground hover:text-foreground"
+                      aria-label={`Clear ${filter.label} filter`}
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
