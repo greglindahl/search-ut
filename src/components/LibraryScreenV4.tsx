@@ -63,30 +63,73 @@ const mockFolderCards: FolderCard[] = [
   { id: "12", name: "Folder 12", galleryCount: 14, timeAgo: "2 weeks ago" },
 ];
 
+type ItemType = "folder" | "gallery";
+
 interface FolderItem {
   id: string;
   name: string;
-  subfolderCount?: number;
+  type: ItemType;
+  count?: number;
+  countType?: "folders" | "galleries" | "assets";
   children?: FolderItem[];
 }
 
 const folders: FolderItem[] = [
-  { id: "all", name: "All Files" },
+  { id: "all", name: "All Files", type: "folder" },
   {
     id: "season-2025",
     name: "Season 2025",
-    subfolderCount: 3,
+    type: "folder",
+    count: 3,
+    countType: "folders",
     children: [
-      { id: "2025-q1", name: "Q1" },
-      { id: "2025-q2", name: "Q2" },
-      { id: "2025-q3", name: "Q3" },
+      { 
+        id: "in-game", 
+        name: "In-Game", 
+        type: "folder",
+        count: 2,
+        countType: "galleries",
+        children: [
+          { id: "scoring-highlights", name: "Scoring Highlights", type: "gallery", count: 48, countType: "assets" },
+          { id: "rebounds-reels", name: "Rebounds Reels", type: "gallery", count: 48, countType: "assets" },
+        ],
+      },
+      { 
+        id: "training", 
+        name: "Training", 
+        type: "folder",
+        count: 8,
+        countType: "galleries",
+      },
+      { 
+        id: "fan-engagement", 
+        name: "Fan Engagement", 
+        type: "folder",
+        count: 5,
+        countType: "galleries",
+      },
+      { 
+        id: "big-moments", 
+        name: "Big Moments", 
+        type: "gallery",
+        count: 48,
+        countType: "assets",
+      },
     ],
   },
   {
     id: "season-2024",
     name: "Season 2024",
-    subfolderCount: 12,
-    children: [],
+    type: "folder",
+    count: 12,
+    countType: "folders",
+  },
+  {
+    id: "season-2023",
+    name: "Season 2023",
+    type: "folder",
+    count: 12,
+    countType: "folders",
   },
 ];
 
@@ -184,6 +227,9 @@ export function LibraryScreenV4({ isMobile = false }: LibraryScreenV4Props) {
     const hasChildren = folder.children && folder.children.length > 0;
     const isExpanded = expandedFolders.has(folder.id);
     const isActive = activeFolder === folder.id;
+    const isGallery = folder.type === "gallery";
+    const isAllFiles = folder.id === "all";
+    const hasExpandableContent = hasChildren || (folder.count && folder.count > 0 && !isGallery);
 
     return (
       <div key={folder.id}>
@@ -192,32 +238,50 @@ export function LibraryScreenV4({ isMobile = false }: LibraryScreenV4Props) {
             setActiveFolder(folder.id);
             if (hasChildren) toggleFolderExpand(folder.id);
           }}
-          className={`w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${
+          className={`w-full flex items-center gap-2 py-1.5 text-sm rounded-md transition-colors ${
             isActive
               ? "bg-accent text-foreground"
               : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
           }`}
-          style={{ paddingLeft: `${12 + depth * 16}px` }}
+          style={{ paddingLeft: `${12 + depth * 16}px`, paddingRight: 12 }}
         >
-          {hasChildren && (
+          {/* Chevron for expandable items */}
+          {hasExpandableContent && !isAllFiles ? (
             <ChevronDown
-              className={`w-4 h-4 flex-shrink-0 transition-transform ${
+              className={`w-4 h-4 flex-shrink-0 transition-transform text-muted-foreground ${
                 isExpanded ? "" : "-rotate-90"
               }`}
             />
+          ) : !isAllFiles ? (
+            <span className="w-4 flex-shrink-0" />
+          ) : null}
+          
+          {/* Icon - Gallery or Folder */}
+          {!isAllFiles && (
+            isGallery ? (
+              <Images className="w-4 h-4 flex-shrink-0 text-muted-foreground" />
+            ) : (
+              <Folder className="w-4 h-4 flex-shrink-0 text-muted-foreground" />
+            )
           )}
-          {!hasChildren && folder.id !== "all" && (
-            <Folder className="w-4 h-4 flex-shrink-0" />
-          )}
-          <span className="truncate">{folder.name}</span>
-          {folder.subfolderCount && (
-            <span className="ml-auto text-xs text-muted-foreground">
-              {folder.subfolderCount} folders
-            </span>
-          )}
+          
+          {/* Name */}
+          <span className={`truncate ${isActive ? "font-medium" : ""}`}>{folder.name}</span>
         </button>
+        
+        {/* Count displayed below the name */}
+        {folder.count !== undefined && folder.countType && !isAllFiles && (
+          <div 
+            className="text-xs text-muted-foreground"
+            style={{ paddingLeft: `${12 + depth * 16 + (hasExpandableContent ? 24 : 24)}px` }}
+          >
+            {folder.count} {folder.countType}
+          </div>
+        )}
+        
+        {/* Children */}
         {hasChildren && isExpanded && (
-          <div>
+          <div className="mt-1">
             {folder.children!.map((child) => renderFolder(child, depth + 1))}
           </div>
         )}
