@@ -1,13 +1,21 @@
 import { useState } from "react";
-import { ChevronDown, User, Calendar, Image, Ratio, Users, FolderOpen, X, Search } from "lucide-react";
+import { ChevronDown, User, Calendar as CalendarIcon, Image, Ratio, Users, FolderOpen, X, Search } from "lucide-react";
+import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Calendar } from "@/components/ui/calendar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuCheckboxItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 interface FilterOption {
   label: string;
@@ -71,7 +79,7 @@ const filters: FilterConfig[] = [
   {
     id: "date-range",
     label: "Date",
-    icon: <Calendar className="w-4 h-4" />,
+    icon: <CalendarIcon className="w-4 h-4" />,
     options: [
       { label: "Today", value: "today" },
       { label: "Last 7 Days", value: "week" },
@@ -95,13 +103,21 @@ const filters: FilterConfig[] = [
   },
 ];
 
-interface FilterBarProps {
-  onFilterChange?: (filterId: string, values: string[]) => void;
+export interface CustomDateRange {
+  from: Date | undefined;
+  to: Date | undefined;
 }
 
-export function FilterBar({ onFilterChange }: FilterBarProps) {
+interface FilterBarProps {
+  onFilterChange?: (filterId: string, values: string[]) => void;
+  onCustomDateChange?: (range: CustomDateRange) => void;
+}
+
+export function FilterBar({ onFilterChange, onCustomDateChange }: FilterBarProps) {
   const [activeFilters, setActiveFilters] = useState<Record<string, { value: string; label: string }[]>>({});
   const [searchQueries, setSearchQueries] = useState<Record<string, string>>({});
+  const [customDateRange, setCustomDateRange] = useState<CustomDateRange>({ from: undefined, to: undefined });
+  const [customDateOpen, setCustomDateOpen] = useState(false);
 
   const handleMultiSelect = (filterId: string, value: string, label: string, checked: boolean) => {
     setActiveFilters(prev => {
@@ -127,6 +143,11 @@ export function FilterBar({ onFilterChange }: FilterBarProps) {
   };
 
   const handleSingleSelect = (filterId: string, value: string, label: string) => {
+    if (filterId === "date-range" && value === "custom") {
+      setCustomDateOpen(true);
+      return;
+    }
+    
     setActiveFilters(prev => {
       const newFilters = { ...prev };
       if (value === "all") {
@@ -140,7 +161,24 @@ export function FilterBar({ onFilterChange }: FilterBarProps) {
     });
   };
 
+  const handleCustomDateApply = () => {
+    if (customDateRange.from && customDateRange.to) {
+      const label = `${format(customDateRange.from, "MMM d, yyyy")} - ${format(customDateRange.to, "MMM d, yyyy")}`;
+      setActiveFilters(prev => ({
+        ...prev,
+        "date-range": [{ value: "custom", label }]
+      }));
+      onFilterChange?.("date-range", ["custom"]);
+      onCustomDateChange?.(customDateRange);
+      setCustomDateOpen(false);
+    }
+  };
+
   const handleRemoveValue = (filterId: string, value: string) => {
+    if (filterId === "date-range" && value === "custom") {
+      setCustomDateRange({ from: undefined, to: undefined });
+    }
+    
     setActiveFilters(prev => {
       const current = prev[filterId] || [];
       const updated = current.filter(item => item.value !== value);
@@ -156,6 +194,10 @@ export function FilterBar({ onFilterChange }: FilterBarProps) {
   };
 
   const clearFilter = (filterId: string) => {
+    if (filterId === "date-range") {
+      setCustomDateRange({ from: undefined, to: undefined });
+    }
+    
     setActiveFilters(prev => {
       const newFilters = { ...prev };
       delete newFilters[filterId];
@@ -169,6 +211,7 @@ export function FilterBar({ onFilterChange }: FilterBarProps) {
       onFilterChange?.(filterId, []);
     });
     setActiveFilters({});
+    setCustomDateRange({ from: undefined, to: undefined });
   };
 
   const activeFilterCount = Object.keys(activeFilters).length;
@@ -283,6 +326,84 @@ export function FilterBar({ onFilterChange }: FilterBarProps) {
           </DropdownMenu>
         );
       })}
+
+      {/* Custom Date Range Popover */}
+      <Popover open={customDateOpen} onOpenChange={setCustomDateOpen}>
+        <PopoverTrigger asChild>
+          <span className="sr-only">Custom date picker trigger</span>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-4 bg-white z-50" align="start">
+          <div className="space-y-4">
+            <div className="text-sm font-medium">Select Date Range</div>
+            <div className="flex gap-4">
+              <div className="space-y-2">
+                <label className="text-xs text-muted-foreground">Start Date</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-[140px] justify-start text-left font-normal text-xs",
+                        !customDateRange.from && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-3 w-3" />
+                      {customDateRange.from ? format(customDateRange.from, "MMM d, yyyy") : "Pick date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 bg-white z-[60]" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={customDateRange.from}
+                      onSelect={(date) => setCustomDateRange(prev => ({ ...prev, from: date }))}
+                      disabled={(date) => date > new Date() || (customDateRange.to ? date > customDateRange.to : false)}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs text-muted-foreground">End Date</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-[140px] justify-start text-left font-normal text-xs",
+                        !customDateRange.to && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-3 w-3" />
+                      {customDateRange.to ? format(customDateRange.to, "MMM d, yyyy") : "Pick date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 bg-white z-[60]" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={customDateRange.to}
+                      onSelect={(date) => setCustomDateRange(prev => ({ ...prev, to: date }))}
+                      disabled={(date) => date > new Date() || (customDateRange.from ? date < customDateRange.from : false)}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" size="sm" onClick={() => setCustomDateOpen(false)}>
+                Cancel
+              </Button>
+              <Button 
+                size="sm" 
+                onClick={handleCustomDateApply}
+                disabled={!customDateRange.from || !customDateRange.to}
+              >
+                Apply
+              </Button>
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
 
       {/* Clear All */}
       {activeFilterCount > 0 && (
