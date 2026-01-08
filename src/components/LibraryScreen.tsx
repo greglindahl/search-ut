@@ -130,7 +130,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
   const [aspectRatioFilter, setAspectRatioFilter] = useState<LibraryAsset["aspectRatio"][]>([]);
   const [peopleFilter, setPeopleFilter] = useState<string[]>([]);
   const [folderFilter, setFolderFilter] = useState<string[]>([]);
-  const [dateRangeFilter, setDateRangeFilter] = useState<"today" | "week" | "month" | "year" | null>(null);
+  const [dateRangeFilter, setDateRangeFilter] = useState<"today" | "week" | "month" | "quarter" | "year" | "custom" | null>(null);
 
   // Use the library search hook
   const { results, allAssets, isLoading, totalCount, search } = useLibrarySearch();
@@ -254,7 +254,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
         setFolderFilter(values);
         break;
       case "date-range":
-        setDateRangeFilter((values[0] as "today" | "week" | "month" | "year") ?? null);
+        setDateRangeFilter((values[0] as "today" | "week" | "month" | "quarter" | "year" | "custom") ?? null);
         break;
     }
   }, []);
