@@ -788,6 +788,28 @@ transition: opacity (default Tailwind);`}
                 </div>
               </div>
             </div>
+
+            <div className="bg-card p-6 rounded-lg border">
+              <h4 className="font-medium mb-2 text-primary">Task 4: The "Deep Dive" (Navigation vs. Search)</h4>
+              <div className="space-y-3">
+                <div>
+                  <span className="text-sm font-medium text-muted-foreground">Scenario:</span>
+                  <p className="text-sm mt-1">"Your manager told you the files are in the 'Warriors vs Clippers' folder. Find that specific folder and verify it contains James Harden assets."</p>
+                </div>
+                <div>
+                  <span className="text-sm font-medium text-muted-foreground">What this tests:</span>
+                  <p className="text-sm mt-1">The usability of the Folder Panel and the Locations facet. It determines if users prefer a "click-through" hierarchy or if they'll just type "Clippers" into the search bar.</p>
+                </div>
+                <div className="mt-4 p-3 bg-muted rounded">
+                  <span className="text-xs font-medium text-muted-foreground">Possible approaches:</span>
+                  <ul className="text-xs mt-1 space-y-1 list-disc list-inside text-muted-foreground">
+                    <li>Folder path: Navigate folder hierarchy → Warriors vs Clippers → Browse contents</li>
+                    <li>Search path: Command Palette → "Warriors Clippers" or "Clippers folder"</li>
+                    <li>Hybrid: Location facet → Search within filtered results for "Harden"</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
           </div>
         </section>
