@@ -766,6 +766,28 @@ transition: opacity (default Tailwind);`}
                 </div>
               </div>
             </div>
+
+            <div className="bg-card p-6 rounded-lg border">
+              <h4 className="font-medium mb-2 text-primary">Task 3: The "Broad Discovery" (Scene-Based Search)</h4>
+              <div className="space-y-3">
+                <div>
+                  <span className="text-sm font-medium text-muted-foreground">Scenario:</span>
+                  <p className="text-sm mt-1">"You're looking for 'hype' content. Find all Video clips across the entire library that involve a Dunk or a Three Pointer."</p>
+                </div>
+                <div>
+                  <span className="text-sm font-medium text-muted-foreground">What this tests:</span>
+                  <p className="text-sm mt-1">Does the user go to the "More" filters for 'Scene', or do they try typing "Dunk Video" into the Command Palette? (Tests search intent vs. facet navigation).</p>
+                </div>
+                <div className="mt-4 p-3 bg-muted rounded">
+                  <span className="text-xs font-medium text-muted-foreground">Possible approaches:</span>
+                  <ul className="text-xs mt-1 space-y-1 list-disc list-inside text-muted-foreground">
+                    <li>Facet path: Content Type → Video, then Scene → Dunk / Three Pointer</li>
+                    <li>Search path: Command Palette → "Dunk Video"</li>
+                    <li>Hybrid: Filter by Video, then search "Dunk"</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
           </div>
         </section>
