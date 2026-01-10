@@ -717,6 +717,36 @@ transition: opacity (default Tailwind);`}
           </div>
         </section>
 
+        {/* User Testing Scenarios */}
+        <section id="user-testing" className="mb-12">
+          <h2 className="text-2xl font-semibold mb-4 text-foreground">10. User Testing Scenarios</h2>
+          
+          <div className="space-y-6">
+            <div className="bg-card p-6 rounded-lg border">
+              <h4 className="font-medium mb-2 text-primary">Task 1: The "Brand Compliance" Audit (Intersectionality)</h4>
+              <div className="space-y-3">
+                <div>
+                  <span className="text-sm font-medium text-muted-foreground">Scenario:</span>
+                  <p className="text-sm mt-1">"A sponsor needs to see every Photo of LeBron James from Season 2024 that features Nike branding."</p>
+                </div>
+                <div>
+                  <span className="text-sm font-medium text-muted-foreground">What this tests:</span>
+                  <p className="text-sm mt-1">Can the user successfully combine multiple specific facets (Content Type + Player + Season/Location + Brand) without getting lost in the UI?</p>
+                </div>
+                <div className="mt-4 p-3 bg-muted rounded">
+                  <span className="text-xs font-medium text-muted-foreground">Facets to combine:</span>
+                  <ul className="text-xs mt-1 space-y-1 list-disc list-inside text-muted-foreground">
+                    <li>Content Type: Photo</li>
+                    <li>Player: LeBron James</li>
+                    <li>Season: 2024</li>
+                    <li>Brand: Nike</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Footer */}
         <footer className="mt-16 pt-8 border-t text-center text-sm text-muted-foreground">
           <p>Navigation System Developer Specification</p>
