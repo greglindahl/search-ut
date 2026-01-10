@@ -741,9 +741,32 @@ transition: opacity (default Tailwind);`}
                     <li>Season: 2024</li>
                     <li>Brand: Nike</li>
                   </ul>
+              </div>
+            </div>
+
+            <div className="bg-card p-6 rounded-lg border">
+              <h4 className="font-medium mb-2 text-primary">Task 2: The "Bulk Curation" (Organization & Selection)</h4>
+              <div className="space-y-3">
+                <div>
+                  <span className="text-sm font-medium text-muted-foreground">Scenario:</span>
+                  <p className="text-sm mt-1">"You need to pull a group of assets created by Mike Ross to start a new 'Highlights' gallery. Find all his files and select them for export."</p>
+                </div>
+                <div>
+                  <span className="text-sm font-medium text-muted-foreground">What this tests:</span>
+                  <p className="text-sm mt-1">Effectiveness of the 'Creator' filter combined with the Selection Mode (the checkboxes and multi-select logic).</p>
+                </div>
+                <div className="mt-4 p-3 bg-muted rounded">
+                  <span className="text-xs font-medium text-muted-foreground">Key interactions:</span>
+                  <ul className="text-xs mt-1 space-y-1 list-disc list-inside text-muted-foreground">
+                    <li>Filter by Creator: Mike Ross</li>
+                    <li>Enter Selection Mode</li>
+                    <li>Multi-select assets (checkboxes)</li>
+                    <li>Export selected items</li>
+                  </ul>
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </section>
 
