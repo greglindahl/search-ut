@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { FacetedSearchWithTypeahead } from "@/components/FacetedSearchWithTypeahead";
 import { FilterBar } from "@/components/FilterBar";
+import { GalleryDetailsView } from "@/components/GalleryDetailsView";
 import { useLibrarySearch } from "@/hooks/useLibrarySearch";
 import { getRelativeTime, LibraryAsset } from "@/lib/mockLibraryData";
 import { folders, mockGalleries, mockFolderCards, FolderItem, findFolderById, getAllDescendantIds } from "@/lib/mockFolderData";
@@ -307,6 +308,18 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
   // Determine if we should show expanded sidebar (user can toggle on any tab)
   const isFoldersTab = activeTab === "folders";
 
+  // Check if active folder is a gallery
+  const activeGallery = useMemo(() => {
+    if (activeFolder === "all") return null;
+    const folder = findFolderById(folders, activeFolder);
+    return folder?.type === "gallery" ? folder : null;
+  }, [activeFolder]);
+
+  // Handle navigation from gallery view back to folders
+  const handleGalleryNavigate = useCallback((folderId: string) => {
+    setActiveFolder(folderId);
+  }, []);
+
   return (
     <div className="flex-1 flex">
       {/* Folders Sidebar - Always visible, toggleable on all tabs */}
@@ -355,9 +368,16 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
         )}
       </div>
 
-      {/* Main Content Area */}
+      {/* Main Content Area - Show GalleryDetailsView or Library content */}
+      {activeGallery ? (
+        <GalleryDetailsView 
+          galleryId={activeGallery.id} 
+          gallery={activeGallery} 
+          onNavigate={handleGalleryNavigate}
+          isMobile={isMobile}
+        />
+      ) : (
       <div className={`flex-1 flex flex-col min-w-0 px-4 md:px-8 xl:px-16 pb-12 ${isMobile ? "pt-[58px]" : "pt-20"}`}>
-
         {/* Header with title and actions */}
         <div className="py-4 flex items-center justify-between">
           <h1 className="text-2xl font-semibold">Library</h1>
@@ -718,6 +738,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
           </TabsContent>
         </Tabs>
       </div>
+      )}
     </div>
   );
 }
