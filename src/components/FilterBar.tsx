@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, User, Calendar as CalendarIcon, Image, Ratio, Users, FolderOpen, X, Search } from "lucide-react";
+import { ChevronDown, Calendar as CalendarIcon, X, Search } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +34,7 @@ const filters: FilterConfig[] = [
   {
     id: "creator",
     label: "Creator",
-    icon: <User className="w-4 h-4" />,
+    icon: null,
     multiSelect: true,
     options: [
       { label: "John Smith", value: "john" },
@@ -45,7 +45,7 @@ const filters: FilterConfig[] = [
   {
     id: "content-type",
     label: "Type",
-    icon: <Image className="w-4 h-4" />,
+    icon: null,
     multiSelect: true,
     options: [
       { label: "Image", value: "image" },
@@ -55,7 +55,7 @@ const filters: FilterConfig[] = [
   {
     id: "people",
     label: "People",
-    icon: <Users className="w-4 h-4" />,
+    icon: null,
     multiSelect: true,
     options: [
       { label: "Lebron James", value: "Lebron James" },
@@ -68,7 +68,7 @@ const filters: FilterConfig[] = [
   {
     id: "folders",
     label: "Folders",
-    icon: <FolderOpen className="w-4 h-4" />,
+    icon: null,
     multiSelect: true,
     options: [
       { label: "Season 2025", value: "season-2025" },
@@ -79,7 +79,7 @@ const filters: FilterConfig[] = [
   {
     id: "date-range",
     label: "Date",
-    icon: <CalendarIcon className="w-4 h-4" />,
+    icon: null,
     options: [
       { label: "Today", value: "today" },
       { label: "Last 7 Days", value: "week" },
@@ -92,7 +92,7 @@ const filters: FilterConfig[] = [
   {
     id: "aspect-ratio",
     label: "Ratio",
-    icon: <Ratio className="w-4 h-4" />,
+    icon: null,
     multiSelect: true,
     options: [
       { label: "1:1", value: "1:1" },
@@ -272,8 +272,7 @@ export function FilterBar({ onFilterChange, onCustomDateChange }: FilterBarProps
                   size="sm"
                   className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-white"
                 >
-                  {filter.icon}
-                  <span className="hidden sm:inline">{filter.label}</span>
+                  <span>{filter.label}</span>
                   <ChevronDown className="w-3 h-3 opacity-50" />
                 </Button>
               )}
