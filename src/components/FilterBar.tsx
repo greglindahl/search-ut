@@ -34,11 +34,11 @@ interface FilterConfig {
   isTreeStructure?: boolean;
 }
 
-// Helper to flatten folder tree into options with depth
+// Helper to flatten folder tree into options with depth (folders only, no galleries)
 function flattenFolderTree(items: FolderItem[], depth = 0): FilterOption[] {
   const result: FilterOption[] = [];
   items.forEach(item => {
-    if (item.id !== "all") { // Skip "All Files"
+    if (item.id !== "all" && item.type === "folder") { // Skip "All Files" and galleries
       result.push({
         label: item.name,
         value: item.id,
