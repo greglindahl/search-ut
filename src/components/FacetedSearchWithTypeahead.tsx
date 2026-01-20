@@ -28,7 +28,7 @@ const facetGroups: FacetGroup[] = [
     ],
   },
   {
-    label: "Players",
+    label: "People",
     facets: [
       "Lebron James", "Steph Curry", "Kevin Durant", "Giannis Antetokounmpo", "Luka Doncic",
     ],
