@@ -9,6 +9,29 @@ export interface FolderItem {
   children?: FolderItem[];
 }
 
+// Helper to get all descendant folder/gallery IDs (including self)
+export function getAllDescendantIds(folder: FolderItem): string[] {
+  const ids = [folder.id];
+  if (folder.children) {
+    folder.children.forEach(child => {
+      ids.push(...getAllDescendantIds(child));
+    });
+  }
+  return ids;
+}
+
+// Helper to find a folder by ID in the tree
+export function findFolderById(folders: FolderItem[], id: string): FolderItem | null {
+  for (const folder of folders) {
+    if (folder.id === id) return folder;
+    if (folder.children) {
+      const found = findFolderById(folder.children, id);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
 export interface Gallery {
   id: string;
   name: string;

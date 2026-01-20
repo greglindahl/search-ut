@@ -6,7 +6,7 @@ import { FacetedSearchWithTypeahead } from "@/components/FacetedSearchWithTypeah
 import { FilterBar } from "@/components/FilterBar";
 import { useLibrarySearch } from "@/hooks/useLibrarySearch";
 import { getRelativeTime, LibraryAsset } from "@/lib/mockLibraryData";
-import { folders, mockGalleries, mockFolderCards, FolderItem } from "@/lib/mockFolderData";
+import { folders, mockGalleries, mockFolderCards, FolderItem, findFolderById, getAllDescendantIds } from "@/lib/mockFolderData";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
@@ -97,9 +97,22 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
     return Array.from(people).sort();
   }, [allAssets]);
 
+  // Get allowed folder IDs based on activeFolder selection
+  const allowedFolderIds = useMemo(() => {
+    if (activeFolder === "all") return null; // null means show all
+    const folder = findFolderById(folders, activeFolder);
+    if (!folder) return null;
+    return getAllDescendantIds(folder);
+  }, [activeFolder]);
+
   // Filter results by all active filters
   const filteredResults = useMemo(() => {
     return results.filter((asset) => {
+      // Folder sidebar filter (based on activeFolder selection)
+      if (allowedFolderIds !== null) {
+        if (!asset.folderId || !allowedFolderIds.includes(asset.folderId)) return false;
+      }
+
       // Content type filter
       if (contentTypeFilter.length && !contentTypeFilter.includes(asset.type)) return false;
 
@@ -143,7 +156,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
         }
       }
 
-      // Folder/Season filter (simple year-based mapping)
+      // Folder dropdown filter (from FilterBar - simple year-based mapping)
       if (folderFilter.length) {
         const year = asset.dateCreated.getFullYear();
         const matchesAny = folderFilter.some((f) => {
@@ -159,6 +172,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
     });
   }, [
     results,
+    allowedFolderIds,
     contentTypeFilter,
     creatorFilter,
     aspectRatioFilter,

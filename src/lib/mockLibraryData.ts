@@ -14,6 +14,7 @@ export interface LibraryAsset {
   fileSize: string;
   dimensions?: string;
   duration?: string;
+  folderId?: string; // Which folder/gallery this asset belongs to
 }
 
 const creators = [
@@ -560,6 +561,13 @@ const fixedAssets: LibraryAsset[] = [
   },
 ];
 
+// Available folder IDs for asset assignment
+const folderIds = [
+  "in-game", "training", "fan-engagement", "big-moments", "scoring-highlights", "rebounds-reels",
+  "in-game-2024", "training-2024", "fan-engagement-2024", "big-moments-2024", "scoring-highlights-2024", "rebounds-reels-2024",
+  "in-game-2023", "training-2023", "fan-engagement-2023", "big-moments-2023", "scoring-highlights-2023", "rebounds-reels-2023",
+];
+
 // Generate 80 mock assets with good distribution of tags
 export const mockLibraryAssets: LibraryAsset[] = (() => {
   // Use a simple seeded random for consistent results
@@ -588,6 +596,7 @@ export const mockLibraryAssets: LibraryAsset[] = (() => {
     const aspectRatio = seededFromArray(["1:1", "16:9", "9:16", "4:3"] as const);
     const status = seededFromArray(["approved", "pending", "draft"] as const);
     const tags = seededFromArray(tagSets);
+    const folderId = seededFromArray(folderIds);
     
     const fileSizes = {
       image: ["1.2 MB", "2.4 MB", "856 KB", "3.1 MB", "1.8 MB"],
@@ -621,11 +630,18 @@ export const mockLibraryAssets: LibraryAsset[] = (() => {
       fileSize: seededFromArray(fileSizes[type]),
       dimensions: type === "image" || type === "video" ? seededFromArray(dimensions[aspectRatio]) : undefined,
       duration: type === "video" ? seededFromArray(durations) : undefined,
+      folderId,
     };
   };
   
+  // Assign folder IDs to fixed assets based on their content
+  const fixedAssetsWithFolders = fixedAssets.map((asset, index) => ({
+    ...asset,
+    folderId: folderIds[index % folderIds.length],
+  }));
+  
   // Combine fixed assets with generated ones
-  return [...fixedAssets, ...Array.from({ length: 80 }, (_, i) => generateSeededAsset(i + 1))];
+  return [...fixedAssetsWithFolders, ...Array.from({ length: 80 }, (_, i) => generateSeededAsset(i + 1))];
 })();
 
 // Helper to get relative time string
