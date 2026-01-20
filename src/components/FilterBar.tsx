@@ -133,9 +133,12 @@ export interface CustomDateRange {
 interface FilterBarProps {
   onFilterChange?: (filterId: string, values: string[]) => void;
   onCustomDateChange?: (range: CustomDateRange) => void;
+  hideFilters?: string[];
 }
 
-export function FilterBar({ onFilterChange, onCustomDateChange }: FilterBarProps) {
+export function FilterBar({ onFilterChange, onCustomDateChange, hideFilters = [] }: FilterBarProps) {
+  // Filter out hidden filters
+  const visibleFilters = filters.filter(f => !hideFilters.includes(f.id));
   const [activeFilters, setActiveFilters] = useState<Record<string, { value: string; label: string }[]>>({});
   const [searchQueries, setSearchQueries] = useState<Record<string, string>>({});
   const [customDateRange, setCustomDateRange] = useState<CustomDateRange>({ from: undefined, to: undefined });
@@ -240,7 +243,7 @@ export function FilterBar({ onFilterChange, onCustomDateChange }: FilterBarProps
 
   return (
     <div className="flex flex-wrap items-center gap-1.5">
-      {filters.map((filter) => {
+      {visibleFilters.map((filter) => {
         const selected = activeFilters[filter.id] || [];
         const isActive = selected.length > 0;
         const isMulti = filter.multiSelect;
