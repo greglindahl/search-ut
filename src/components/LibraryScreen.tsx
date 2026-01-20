@@ -174,6 +174,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
   const [peopleFilter, setPeopleFilter] = useState<string[]>([]);
   const [folderFilter, setFolderFilter] = useState<string[]>([]);
   const [dateRangeFilter, setDateRangeFilter] = useState<"today" | "week" | "month" | "quarter" | "year" | "custom" | null>(null);
+  const [customDateRange, setCustomDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({ from: undefined, to: undefined });
 
   // Use the library search hook
   const { results, allAssets, isLoading, totalCount, search } = useLibrarySearch();
@@ -226,16 +227,28 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
       // Date range filter
       if (dateRangeFilter) {
         const now = new Date();
-        const diffDays = Math.floor((now.getTime() - asset.dateCreated.getTime()) / 86400000);
-        const matches =
-          dateRangeFilter === "today"
-            ? diffDays === 0
-            : dateRangeFilter === "week"
-              ? diffDays <= 7
-              : dateRangeFilter === "month"
-                ? diffDays <= 30
-                : diffDays <= 365;
-        if (!matches) return false;
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const assetDate = new Date(asset.dateCreated.getFullYear(), asset.dateCreated.getMonth(), asset.dateCreated.getDate());
+        
+        if (dateRangeFilter === "custom" && customDateRange.from && customDateRange.to) {
+          // Custom date range filtering
+          const fromDate = new Date(customDateRange.from.getFullYear(), customDateRange.from.getMonth(), customDateRange.from.getDate());
+          const toDate = new Date(customDateRange.to.getFullYear(), customDateRange.to.getMonth(), customDateRange.to.getDate());
+          if (assetDate < fromDate || assetDate > toDate) return false;
+        } else {
+          const diffDays = Math.floor((today.getTime() - assetDate.getTime()) / 86400000);
+          const matches =
+            dateRangeFilter === "today"
+              ? diffDays === 0
+              : dateRangeFilter === "week"
+                ? diffDays <= 7
+                : dateRangeFilter === "month"
+                  ? diffDays <= 30
+                  : dateRangeFilter === "quarter"
+                    ? diffDays <= 90
+                    : diffDays <= 365;
+          if (!matches) return false;
+        }
       }
 
       // Folder/Season filter (simple year-based mapping)
@@ -260,6 +273,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
     peopleFilter,
     folderFilter,
     dateRangeFilter,
+    customDateRange,
   ]);
 
   // Compute dynamic filter counts based on current results
@@ -300,6 +314,10 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
         setDateRangeFilter((values[0] as "today" | "week" | "month" | "quarter" | "year" | "custom") ?? null);
         break;
     }
+  }, []);
+
+  const handleCustomDateChange = useCallback((range: { from: Date | undefined; to: Date | undefined }) => {
+    setCustomDateRange(range);
   }, []);
 
   const toggleFolderExpand = (folderId: string) => {
@@ -502,7 +520,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
 
             {/* Filters and Controls - Single Row */}
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-              <FilterBar onFilterChange={handleFilterChange} />
+              <FilterBar onFilterChange={handleFilterChange} onCustomDateChange={handleCustomDateChange} />
 
               <div className="flex items-center gap-2">
                 <DropdownMenu>
