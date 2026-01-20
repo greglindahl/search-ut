@@ -425,9 +425,6 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
                   <div className="flex items-center gap-2 min-w-0">
                     {suggestion.icon}
                     <span className="truncate">{suggestion.label}</span>
-                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 flex-shrink-0">
-                      {suggestion.type}
-                    </Badge>
                   </div>
                   {suggestion.count !== undefined && (
                     <span className="text-xs text-muted-foreground flex-shrink-0">
