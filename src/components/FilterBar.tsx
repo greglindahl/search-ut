@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, Calendar as CalendarIcon, X, Search } from "lucide-react";
+import { ChevronDown, Calendar as CalendarIcon, X, Search, ChevronRight, Folder, Images } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,10 +16,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { folders, FolderItem } from "@/lib/mockFolderData";
 
 interface FilterOption {
   label: string;
   value: string;
+  depth?: number;
+  type?: "folder" | "gallery";
 }
 
 interface FilterConfig {
@@ -28,7 +31,29 @@ interface FilterConfig {
   icon: React.ReactNode;
   options: FilterOption[];
   multiSelect?: boolean;
+  isTreeStructure?: boolean;
 }
+
+// Helper to flatten folder tree into options with depth
+function flattenFolderTree(items: FolderItem[], depth = 0): FilterOption[] {
+  const result: FilterOption[] = [];
+  items.forEach(item => {
+    if (item.id !== "all") { // Skip "All Files"
+      result.push({
+        label: item.name,
+        value: item.id,
+        depth,
+        type: item.type,
+      });
+      if (item.children) {
+        result.push(...flattenFolderTree(item.children, depth + 1));
+      }
+    }
+  });
+  return result;
+}
+
+const folderOptions = flattenFolderTree(folders);
 
 const filters: FilterConfig[] = [
   {
@@ -70,11 +95,8 @@ const filters: FilterConfig[] = [
     label: "Folders",
     icon: null,
     multiSelect: true,
-    options: [
-      { label: "Season 2025", value: "season-2025" },
-      { label: "Season 2024", value: "season-2024" },
-      { label: "Archive", value: "archive" },
-    ],
+    isTreeStructure: true,
+    options: folderOptions,
   },
   {
     id: "date-range",
@@ -292,21 +314,30 @@ export function FilterBar({ onFilterChange, onCustomDateChange }: FilterBarProps
                   />
                 </div>
               </div>
-              <div className="max-h-[200px] overflow-y-auto">
+              <div className="max-h-[280px] overflow-y-auto">
                 {filter.options
                   .filter(option => 
                     option.label.toLowerCase().includes((searchQueries[filter.id] || "").toLowerCase())
                   )
-                  .map((option) => (
-                    isMulti ? (
+                  .map((option) => {
+                    const isTreeItem = filter.isTreeStructure && option.depth !== undefined;
+                    const indent = isTreeItem ? option.depth! * 12 : 0;
+                    const Icon = option.type === "gallery" ? Images : Folder;
+                    
+                    return isMulti ? (
                       <DropdownMenuCheckboxItem
                         key={option.value}
                         checked={selected.some(s => s.value === option.value)}
                         onCheckedChange={(checked) => 
                           handleMultiSelect(filter.id, option.value, option.label, checked)
                         }
+                        style={{ paddingLeft: isTreeItem ? `${8 + indent}px` : undefined }}
+                        className="flex items-center gap-2"
                       >
-                        {option.label}
+                        {isTreeItem && (
+                          <Icon className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                        )}
+                        <span className={option.depth === 0 ? "font-medium" : ""}>{option.label}</span>
                       </DropdownMenuCheckboxItem>
                     ) : (
                       <DropdownMenuCheckboxItem
@@ -316,8 +347,8 @@ export function FilterBar({ onFilterChange, onCustomDateChange }: FilterBarProps
                       >
                         {option.label}
                       </DropdownMenuCheckboxItem>
-                    )
-                  ))
+                    );
+                  })
                 }
                 {filter.options.filter(option => 
                   option.label.toLowerCase().includes((searchQueries[filter.id] || "").toLowerCase())
