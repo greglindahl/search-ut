@@ -78,7 +78,7 @@ const folders: FolderItem[] = [
   { id: "all", name: "All Files", type: "folder" },
   {
     id: "season-2025",
-    name: "Season 2025",
+    name: "Season 25-26",
     type: "folder",
     count: 3,
     countType: "folders",
@@ -119,14 +119,14 @@ const folders: FolderItem[] = [
   },
   {
     id: "season-2024",
-    name: "Season 2024",
+    name: "Season 24-25",
     type: "folder",
     count: 12,
     countType: "folders",
   },
   {
     id: "season-2023",
-    name: "Season 2023",
+    name: "Season 23-24",
     type: "folder",
     count: 12,
     countType: "folders",
