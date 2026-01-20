@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { FacetedSearchWithTypeahead } from "@/components/FacetedSearchWithTypeahead";
 import { FilterBar } from "@/components/FilterBar";
 import { GalleryDetailsView } from "@/components/GalleryDetailsView";
+import { FolderDetailsView } from "@/components/FolderDetailsView";
 import { useLibrarySearch } from "@/hooks/useLibrarySearch";
 import { getRelativeTime, LibraryAsset } from "@/lib/mockLibraryData";
 import { folders, mockGalleries, mockFolderCards, FolderItem, findFolderById, getAllDescendantIds } from "@/lib/mockFolderData";
@@ -308,15 +309,21 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
   // Determine if we should show expanded sidebar (user can toggle on any tab)
   const isFoldersTab = activeTab === "folders";
 
-  // Check if active folder is a gallery
+  // Check if active folder is a gallery or a folder (not "all")
   const activeGallery = useMemo(() => {
     if (activeFolder === "all") return null;
     const folder = findFolderById(folders, activeFolder);
     return folder?.type === "gallery" ? folder : null;
   }, [activeFolder]);
 
-  // Handle navigation from gallery view back to folders
-  const handleGalleryNavigate = useCallback((folderId: string) => {
+  const activeFolderItem = useMemo(() => {
+    if (activeFolder === "all") return null;
+    const folder = findFolderById(folders, activeFolder);
+    return folder?.type === "folder" ? folder : null;
+  }, [activeFolder]);
+
+  // Handle navigation from folder/gallery view
+  const handleNavigate = useCallback((folderId: string) => {
     setActiveFolder(folderId);
   }, []);
 
@@ -368,12 +375,19 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
         )}
       </div>
 
-      {/* Main Content Area - Show GalleryDetailsView or Library content */}
+      {/* Main Content Area - Show GalleryDetailsView, FolderDetailsView, or Library content */}
       {activeGallery ? (
         <GalleryDetailsView 
           galleryId={activeGallery.id} 
           gallery={activeGallery} 
-          onNavigate={handleGalleryNavigate}
+          onNavigate={handleNavigate}
+          isMobile={isMobile}
+        />
+      ) : activeFolderItem ? (
+        <FolderDetailsView 
+          folderId={activeFolderItem.id} 
+          folder={activeFolderItem} 
+          onNavigate={handleNavigate}
           isMobile={isMobile}
         />
       ) : (
