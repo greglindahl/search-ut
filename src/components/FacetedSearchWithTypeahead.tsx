@@ -420,17 +420,10 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
                 <button
                   key={`${suggestion.type}-${suggestion.value}-${idx}`}
                   onClick={() => handleSuggestionClick(suggestion)}
-                  className="w-full flex items-center justify-between gap-2 px-2 py-2 text-sm text-left rounded hover:bg-accent transition-colors"
+                  className="w-full flex items-center gap-2 px-2 py-2 text-sm text-left rounded hover:bg-accent transition-colors"
                 >
-                  <div className="flex items-center gap-2 min-w-0">
-                    {suggestion.icon}
-                    <span className="truncate">{suggestion.label}</span>
-                  </div>
-                  {suggestion.count !== undefined && (
-                    <span className="text-xs text-muted-foreground flex-shrink-0">
-                      {suggestion.count}
-                    </span>
-                  )}
+                  {suggestion.icon}
+                  <span className="truncate">{suggestion.label}</span>
                 </button>
               ))}
             </div>
