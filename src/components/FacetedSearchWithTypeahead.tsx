@@ -100,16 +100,17 @@ function filterAssets(assets: LibraryAsset[], query: string, selectedFacets: str
       if (!allWordsMatch) return false;
     }
 
-    // Facet match
+    // Facet match - ALL selected facets must match (AND logic)
     if (selectedFacets.length > 0) {
       const lowerFacets = selectedFacets.map(f => f.toLowerCase());
-      const matchesFacet = lowerFacets.some(facet => 
-        asset.tags.some(tag => tag.toLowerCase() === facet) ||
-        asset.type.toLowerCase() === facet ||
-        (facet === "photo" && asset.type === "image") ||
-        (facet === "video" && asset.type === "video")
-      );
-      if (!matchesFacet) return false;
+      const allFacetsMatch = lowerFacets.every(facet => {
+        const matchesTag = asset.tags.some(tag => tag.toLowerCase() === facet);
+        const matchesType = asset.type.toLowerCase() === facet;
+        const matchesPhoto = facet === "photo" && asset.type === "image";
+        const matchesVideo = facet === "video" && asset.type === "video";
+        return matchesTag || matchesType || matchesPhoto || matchesVideo;
+      });
+      if (!allFacetsMatch) return false;
     }
 
     return true;
