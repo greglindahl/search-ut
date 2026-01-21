@@ -167,9 +167,18 @@
     @apply border-border;
   }
 
+  html {
+    /* Prevent layout shift when content changes height (e.g., grid <-> table toggles) */
+    scrollbar-gutter: stable;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-family: system-ui, -apple-system, sans-serif;
+    /* Keep a consistent vertical scrollbar to avoid horizontal “jumping” */
+    overflow-y: scroll;
+    /* Avoid scroll anchoring adjustments when swapping large DOM blocks */
+    overflow-anchor: none;
   }
 }
 
