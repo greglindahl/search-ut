@@ -65,6 +65,13 @@ interface Suggestion {
   label: string;
   icon: React.ReactNode;
   count?: number;
+  category?: string; // The group label for facets
+}
+
+interface SelectedFacet {
+  value: string;
+  type: "tag" | "facet";
+  category: string; // e.g., "Tag", "People", "Teams", etc.
 }
 
 interface FacetedSearchWithTypeaheadProps {
@@ -126,7 +133,7 @@ const MAX_RECENT_SEARCHES = 5;
 export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, assets = [] }: FacetedSearchWithTypeaheadProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFacets, setSelectedFacets] = useState<string[]>([]);
+  const [selectedFacets, setSelectedFacets] = useState<SelectedFacet[]>([]);
   const [recentSearches, setRecentSearches] = useState<string[]>(() => {
     try {
       const stored = localStorage.getItem(RECENT_SEARCHES_KEY);
@@ -149,10 +156,13 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Extract just the values for filtering
+  const selectedFacetValues = useMemo(() => selectedFacets.map(f => f.value), [selectedFacets]);
+
   // Filter assets based on current query and selected facets
   const filteredAssets = useMemo(() => {
-    return filterAssets(assets, searchQuery, selectedFacets);
-  }, [assets, searchQuery, selectedFacets]);
+    return filterAssets(assets, searchQuery, selectedFacetValues);
+  }, [assets, searchQuery, selectedFacetValues]);
 
   // Compute dynamic facet counts based on filtered assets
   const facetCounts = useMemo(() => {
@@ -172,8 +182,8 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
 
   // Trigger search when query or facets change
   useEffect(() => {
-    onSearch?.(searchQuery, selectedFacets);
-  }, [searchQuery, selectedFacets, onSearch]);
+    onSearch?.(searchQuery, selectedFacetValues);
+  }, [searchQuery, selectedFacetValues, onSearch]);
 
   // Generate typeahead suggestions based on query
   const suggestions = useMemo((): Suggestion[] => {
@@ -211,13 +221,14 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
           label: `Tag: ${tag}`,
           icon: <Tag className="w-4 h-4 text-muted-foreground" />,
           count,
+          category: "Tag",
         });
       });
 
     // Match facets
     facetGroups.forEach(group => {
       group.facets
-        .filter(f => f.toLowerCase().includes(query) && !selectedFacets.includes(f))
+        .filter(f => f.toLowerCase().includes(query) && !selectedFacetValues.includes(f))
         .slice(0, 2)
         .forEach(facet => {
           const count = facetCounts[facet] || 0;
@@ -228,6 +239,7 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
               label: `${group.label}: ${facet}`,
               icon: <Folder className="w-4 h-4 text-muted-foreground" />,
               count,
+              category: group.label,
             });
           }
         });
@@ -235,16 +247,21 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
 
 
     return results.slice(0, 8);
-  }, [searchQuery, filteredAssets, selectedFacets, facetCounts]);
+  }, [searchQuery, filteredAssets, selectedFacetValues, facetCounts]);
 
-  const handleFacetToggle = useCallback((facet: string) => {
-    setSelectedFacets((prev) =>
-      prev.includes(facet) ? prev.filter((f) => f !== facet) : [...prev, facet]
-    );
+  const handleFacetToggle = useCallback((facetValue: string, type: "tag" | "facet", category: string) => {
+    setSelectedFacets((prev) => {
+      const exists = prev.some(f => f.value === facetValue);
+      if (exists) {
+        return prev.filter((f) => f.value !== facetValue);
+      } else {
+        return [...prev, { value: facetValue, type, category }];
+      }
+    });
   }, []);
 
-  const handleRemoveFacet = useCallback((facet: string) => {
-    setSelectedFacets((prev) => prev.filter((f) => f !== facet));
+  const handleRemoveFacet = useCallback((facetValue: string) => {
+    setSelectedFacets((prev) => prev.filter((f) => f.value !== facetValue));
   }, []);
 
   const handleInputFocus = () => {
@@ -281,7 +298,7 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
 
   const handleSuggestionClick = (suggestion: Suggestion) => {
     if (suggestion.type === "facet" || suggestion.type === "tag") {
-      handleFacetToggle(suggestion.value);
+      handleFacetToggle(suggestion.value, suggestion.type, suggestion.category || "Tag");
       setSearchQuery("");
     } else if (suggestion.type === "creator") {
       // Add creator as a search term
@@ -325,12 +342,12 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
         <div className="flex flex-wrap gap-2 mt-2">
           {selectedFacets.map((facet) => (
             <Badge
-              key={facet}
+              key={facet.value}
               variant="secondary"
               className="gap-1 pr-1 cursor-pointer hover:bg-secondary/80"
-              onClick={() => handleRemoveFacet(facet)}
+              onClick={() => handleRemoveFacet(facet.value)}
             >
-              {facet}
+              {facet.category}: {facet.value}
               <X className="w-3 h-3" />
             </Badge>
           ))}
@@ -367,7 +384,7 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
                   // Only show group if at least one facet has count > 0 or is selected
                   return group.facets.some((facet) => {
                     const count = facetCounts[facet] || 0;
-                    const isSelected = selectedFacets.includes(facet);
+                    const isSelected = selectedFacetValues.includes(facet);
                     return count > 0 || isSelected;
                   });
                 })
@@ -380,18 +397,18 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
                     {group.facets
                       .filter((facet) => {
                         const count = facetCounts[facet] || 0;
-                        const isSelected = selectedFacets.includes(facet);
+                        const isSelected = selectedFacetValues.includes(facet);
                         return count > 0 || isSelected;
                       })
                       .map((facet) => {
                         const count = facetCounts[facet] || 0;
-                        const isSelected = selectedFacets.includes(facet);
+                        const isSelected = selectedFacetValues.includes(facet);
                         return (
                           <Badge
                             key={facet}
                             variant={isSelected ? "default" : "outline"}
                             className="cursor-pointer hover:bg-accent transition-colors text-xs"
-                            onClick={() => handleFacetToggle(facet)}
+                            onClick={() => handleFacetToggle(facet, "facet", group.label)}
                           >
                             {facet}
                             {assets.length > 0 && (
