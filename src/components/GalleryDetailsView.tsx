@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
-import { ChevronDown, ChevronRight, Grid3X3, List, CheckSquare, Image, Images, Video, Share, Upload, MoreVertical } from "lucide-react";
+import { ChevronDown, ChevronRight, Grid3X3, List, CheckSquare, Image, Images, Video, Share, Upload, MoreVertical, Settings2 } from "lucide-react";
+import { AssetTableView } from "@/components/AssetTableView";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -49,6 +50,9 @@ interface GalleryDetailsViewProps {
 
 export function GalleryDetailsView({ galleryId, gallery, onNavigate, isMobile = false }: GalleryDetailsViewProps) {
   const [activeTab, setActiveTab] = useState("assets");
+  
+  // View mode state (grid vs list)
+  const [assetsViewMode, setAssetsViewMode] = useState<"grid" | "list">("grid");
   
   // Filter state (driven by FilterBar)
   const [contentTypeFilter, setContentTypeFilter] = useState<Array<LibraryAsset["type"]>>([]);
@@ -260,7 +264,7 @@ export function GalleryDetailsView({ galleryId, gallery, onNavigate, isMobile = 
             <div className="flex items-center gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-white">
+                  <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-background">
                     120 per Page
                     <ChevronDown className="w-3 h-3 opacity-50" />
                   </Button>
@@ -272,9 +276,16 @@ export function GalleryDetailsView({ galleryId, gallery, onNavigate, isMobile = 
                 </DropdownMenuContent>
               </DropdownMenu>
 
+              {assetsViewMode === "list" && (
+                <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-background">
+                  <Settings2 className="w-3.5 h-3.5" />
+                  Manage Columns
+                </Button>
+              )}
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-white">
+                  <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-background">
                     Sort
                     <ChevronDown className="w-3 h-3 opacity-50" />
                   </Button>
@@ -287,11 +298,21 @@ export function GalleryDetailsView({ galleryId, gallery, onNavigate, isMobile = 
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <div className="flex items-center border rounded-md bg-white">
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-r-none">
+              <div className="flex items-center border rounded-md bg-background">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className={`h-8 w-8 rounded-r-none ${assetsViewMode === "grid" ? "bg-muted" : ""}`}
+                  onClick={() => setAssetsViewMode("grid")}
+                >
                   <Grid3X3 className="w-4 h-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-none border-x">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className={`h-8 w-8 rounded-none border-x ${assetsViewMode === "list" ? "bg-muted" : ""}`}
+                  onClick={() => setAssetsViewMode("list")}
+                >
                   <List className="w-4 h-4" />
                 </Button>
                 <Button variant="ghost" size="icon" className="h-8 w-8 rounded-l-none">
@@ -301,8 +322,10 @@ export function GalleryDetailsView({ galleryId, gallery, onNavigate, isMobile = 
             </div>
           </div>
 
-          {/* Assets Grid with Loading State */}
-          {isLoading ? (
+          {/* Assets Grid/Table with Loading State */}
+          {assetsViewMode === "list" ? (
+            <AssetTableView assets={filteredResults} isLoading={isLoading} />
+          ) : isLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {Array.from({ length: 10 }).map((_, i) => (
                 <div key={i} className="group">
