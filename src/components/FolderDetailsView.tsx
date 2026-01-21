@@ -1,5 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
-import { ChevronDown, ChevronRight, Grid3X3, List, CheckSquare, Image, Images, Video, MoreVertical, Upload } from "lucide-react";
+import { ChevronDown, ChevronRight, Grid3X3, List, CheckSquare, Image, Images, Video, MoreVertical, Upload, Settings2 } from "lucide-react";
+import { AssetTableView } from "@/components/AssetTableView";
+import { GalleryTableView, GalleryTableItem } from "@/components/GalleryTableView";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { FacetedSearchWithTypeahead } from "@/components/FacetedSearchWithTypeahead";
@@ -54,6 +56,10 @@ interface FolderDetailsViewProps {
 
 export function FolderDetailsView({ folderId, folder, onNavigate, isMobile = false }: FolderDetailsViewProps) {
   const [activeTab, setActiveTab] = useState("assets");
+  
+  // View mode state (grid vs list) - independent for assets and galleries
+  const [assetsViewMode, setAssetsViewMode] = useState<"grid" | "list">("grid");
+  const [galleriesViewMode, setGalleriesViewMode] = useState<"grid" | "list">("grid");
   
   // Filter state (driven by FilterBar)
   const [contentTypeFilter, setContentTypeFilter] = useState<Array<LibraryAsset["type"]>>([]);
@@ -248,7 +254,7 @@ export function FolderDetailsView({ folderId, folder, onNavigate, isMobile = fal
             <div className="flex items-center gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-white">
+                  <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-background">
                     120 per Page
                     <ChevronDown className="w-3 h-3 opacity-50" />
                   </Button>
@@ -260,9 +266,16 @@ export function FolderDetailsView({ folderId, folder, onNavigate, isMobile = fal
                 </DropdownMenuContent>
               </DropdownMenu>
 
+              {assetsViewMode === "list" && (
+                <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-background">
+                  <Settings2 className="w-3.5 h-3.5" />
+                  Manage Columns
+                </Button>
+              )}
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-white">
+                  <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-background">
                     Sort
                     <ChevronDown className="w-3 h-3 opacity-50" />
                   </Button>
@@ -275,11 +288,21 @@ export function FolderDetailsView({ folderId, folder, onNavigate, isMobile = fal
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <div className="flex items-center border rounded-md bg-white">
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-r-none">
+              <div className="flex items-center border rounded-md bg-background">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className={`h-8 w-8 rounded-r-none ${assetsViewMode === "grid" ? "bg-muted" : ""}`}
+                  onClick={() => setAssetsViewMode("grid")}
+                >
                   <Grid3X3 className="w-4 h-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-none border-x">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className={`h-8 w-8 rounded-none border-x ${assetsViewMode === "list" ? "bg-muted" : ""}`}
+                  onClick={() => setAssetsViewMode("list")}
+                >
                   <List className="w-4 h-4" />
                 </Button>
                 <Button variant="ghost" size="icon" className="h-8 w-8 rounded-l-none">
@@ -289,8 +312,10 @@ export function FolderDetailsView({ folderId, folder, onNavigate, isMobile = fal
             </div>
           </div>
 
-          {/* Assets Grid with Loading State */}
-          {isLoading ? (
+          {/* Assets Grid/Table with Loading State */}
+          {assetsViewMode === "list" ? (
+            <AssetTableView assets={filteredResults} isLoading={isLoading} />
+          ) : isLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {Array.from({ length: 10 }).map((_, i) => (
                 <div key={i} className="group">
@@ -423,7 +448,7 @@ export function FolderDetailsView({ folderId, folder, onNavigate, isMobile = fal
             <div className="flex items-center gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-white">
+                  <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-background">
                     120 per Page
                     <ChevronDown className="w-3 h-3 opacity-50" />
                   </Button>
@@ -435,9 +460,16 @@ export function FolderDetailsView({ folderId, folder, onNavigate, isMobile = fal
                 </DropdownMenuContent>
               </DropdownMenu>
 
+              {galleriesViewMode === "list" && (
+                <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-background">
+                  <Settings2 className="w-3.5 h-3.5" />
+                  Manage Columns
+                </Button>
+              )}
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-white">
+                  <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-background">
                     Sort
                     <ChevronDown className="w-3 h-3 opacity-50" />
                   </Button>
@@ -450,22 +482,39 @@ export function FolderDetailsView({ folderId, folder, onNavigate, isMobile = fal
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <div className="flex items-center border rounded-md bg-white">
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-r-none">
+              <div className="flex items-center border rounded-md bg-background">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className={`h-8 w-8 rounded-r-none ${galleriesViewMode === "grid" ? "bg-muted" : ""}`}
+                  onClick={() => setGalleriesViewMode("grid")}
+                >
                   <Grid3X3 className="w-4 h-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-none border-x">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className={`h-8 w-8 rounded-l-none border-l ${galleriesViewMode === "list" ? "bg-muted" : ""}`}
+                  onClick={() => setGalleriesViewMode("list")}
+                >
                   <List className="w-4 h-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-l-none">
-                  <CheckSquare className="w-4 h-4" />
                 </Button>
               </div>
             </div>
           </div>
 
-          {/* Gallery Cards Grid */}
-          {childGalleries.length === 0 ? (
+          {/* Gallery Cards Grid or Table */}
+          {galleriesViewMode === "list" ? (
+            <GalleryTableView 
+              galleries={childGalleries.map(g => ({ 
+                id: g.id, 
+                name: g.name, 
+                assetCount: g.count || 0, 
+                timeAgo: "2 days ago" 
+              }))} 
+              onNavigate={onNavigate} 
+            />
+          ) : childGalleries.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <Images className="w-12 h-12 text-muted-foreground/30 mb-4" />
               <h3 className="text-lg font-medium mb-1">No galleries found</h3>
