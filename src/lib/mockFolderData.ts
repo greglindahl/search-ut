@@ -183,16 +183,16 @@ export const mockGalleries: Gallery[] = [
 ];
 
 export const mockFolderCards: FolderCard[] = [
-  { id: "1", name: "Folder 1", galleryCount: 20, timeAgo: "1 day ago" },
-  { id: "2", name: "Folder 2", galleryCount: 8, timeAgo: "3 days ago" },
-  { id: "3", name: "Folder 3", galleryCount: 6, timeAgo: "1 week ago" },
-  { id: "4", name: "Folder 4", galleryCount: 17, timeAgo: "2 weeks ago" },
-  { id: "5", name: "Folder 5", galleryCount: 20, timeAgo: "1 day ago" },
-  { id: "6", name: "Folder 6", galleryCount: 19, timeAgo: "3 days ago" },
-  { id: "7", name: "Folder 7", galleryCount: 16, timeAgo: "1 week ago" },
-  { id: "8", name: "Folder 8", galleryCount: 5, timeAgo: "2 weeks ago" },
-  { id: "9", name: "Folder 9", galleryCount: 22, timeAgo: "1 day ago" },
-  { id: "10", name: "Folder 10", galleryCount: 18, timeAgo: "3 days ago" },
-  { id: "11", name: "Folder 11", galleryCount: 16, timeAgo: "1 week ago" },
-  { id: "12", name: "Folder 12", galleryCount: 14, timeAgo: "2 weeks ago" },
+  { id: "season-2025", name: "Season 25-26", galleryCount: 8, timeAgo: "1 day ago" },
+  { id: "season-2024", name: "Season 24-25", galleryCount: 8, timeAgo: "3 days ago" },
+  { id: "season-2023", name: "Season 23-24", galleryCount: 8, timeAgo: "1 week ago" },
+  { id: "in-game", name: "In-Game", galleryCount: 2, timeAgo: "2 days ago" },
+  { id: "training", name: "Training", galleryCount: 8, timeAgo: "1 week ago" },
+  { id: "fan-engagement", name: "Fan Engagement", galleryCount: 5, timeAgo: "3 days ago" },
+  { id: "press-conferences", name: "Press Conferences", galleryCount: 12, timeAgo: "2 weeks ago" },
+  { id: "draft-day", name: "Draft Day", galleryCount: 6, timeAgo: "1 month ago" },
+  { id: "all-star-weekend", name: "All-Star Weekend", galleryCount: 15, timeAgo: "2 weeks ago" },
+  { id: "playoffs", name: "Playoffs", galleryCount: 22, timeAgo: "3 weeks ago" },
+  { id: "championship", name: "Championship", galleryCount: 18, timeAgo: "1 month ago" },
+  { id: "community-events", name: "Community Events", galleryCount: 9, timeAgo: "2 weeks ago" },
 ];
