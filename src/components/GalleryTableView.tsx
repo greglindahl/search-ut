@@ -42,7 +42,7 @@ type SortDirection = "asc" | "desc";
 
 // Mock data generator for richer gallery info
 function enrichGallery(gallery: Gallery, index: number): GalleryTableItem {
-  const creators = ["Amber Johnson", "Test User 1", "Jul3ia Astatkie", "Marshall Sportgeeks Greer", "Rosanne iOS"];
+  const creators = ["Sarah Mitchell", "David Chen", "Emma Rodriguez", "Marcus Thompson", "Olivia Park", "James Wilson", "Priya Sharma", "Lucas Adams"];
   const descriptions = ["Test Description", "", "Lookbook collection", "", "Getty TEST", ""];
   
   const now = new Date();
