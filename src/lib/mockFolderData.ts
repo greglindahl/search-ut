@@ -174,12 +174,12 @@ export const folders: FolderItem[] = [
 ];
 
 export const mockGalleries: Gallery[] = [
-  { id: "1", name: "Gallery 1", assetCount: 29, timeAgo: "2 days ago" },
-  { id: "2", name: "Gallery 2", assetCount: 30, timeAgo: "5 days ago" },
-  { id: "3", name: "Gallery 3", assetCount: 53, timeAgo: "1 week ago" },
-  { id: "4", name: "Gallery 4", assetCount: 20, timeAgo: "2 weeks ago" },
-  { id: "5", name: "Gallery 5", assetCount: 45, timeAgo: "3 weeks ago" },
-  { id: "6", name: "Gallery 6", assetCount: 12, timeAgo: "1 month ago" },
+  { id: "scoring-highlights", name: "Scoring Highlights", assetCount: 48, timeAgo: "2 days ago" },
+  { id: "rebounds-reels", name: "Rebounds Reels", assetCount: 48, timeAgo: "5 days ago" },
+  { id: "big-moments", name: "Big Moments", assetCount: 48, timeAgo: "1 week ago" },
+  { id: "scoring-highlights-2024", name: "Scoring Highlights 24-25", assetCount: 48, timeAgo: "2 weeks ago" },
+  { id: "rebounds-reels-2024", name: "Rebounds Reels 24-25", assetCount: 48, timeAgo: "3 weeks ago" },
+  { id: "big-moments-2024", name: "Big Moments 24-25", assetCount: 48, timeAgo: "1 month ago" },
 ];
 
 export const mockFolderCards: FolderCard[] = [
