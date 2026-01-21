@@ -511,8 +511,8 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
               </div>
             </div>
 
-
             {/* Assets Grid/Table with Loading State */}
+            <div className="min-h-[400px]">
             {assetsViewMode === "list" ? (
               <AssetTableView assets={filteredResults} isLoading={isLoading} />
             ) : isLoading ? (
@@ -578,6 +578,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                 ))}
               </div>
             )}
+            </div>
           </TabsContent>
 
           <TabsContent value="galleries" className="flex-1 py-6 mt-0">
@@ -661,27 +662,29 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
             </div>
 
             {/* Galleries Grid/Table */}
-            {galleriesViewMode === "list" ? (
-              <GalleryTableView galleries={mockGalleries} />
-            ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {mockGalleries.map((gallery) => (
-                <div key={gallery.id} className="group cursor-pointer border rounded-lg p-4 hover:border-primary/50 transition-colors">
-                  <div className="aspect-[4/3] border border-dashed rounded-lg bg-muted/30 flex items-center justify-center mb-3">
-                    <div className="w-3/4 h-3/4 bg-muted/50 rounded" />
-                  </div>
-                  <div className="flex items-center gap-1.5 text-sm font-medium mb-1">
-                    <Images className="w-4 h-4 text-muted-foreground" />
-                    <span className="truncate">{gallery.name}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>{gallery.assetCount} Assets</span>
-                    <span>{gallery.timeAgo}</span>
-                  </div>
+            <div className="min-h-[400px]">
+              {galleriesViewMode === "list" ? (
+                <GalleryTableView galleries={mockGalleries} />
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {mockGalleries.map((gallery) => (
+                    <div key={gallery.id} className="group cursor-pointer border rounded-lg p-4 hover:border-primary/50 transition-colors">
+                      <div className="aspect-[4/3] border border-dashed rounded-lg bg-muted/30 flex items-center justify-center mb-3">
+                        <div className="w-3/4 h-3/4 bg-muted/50 rounded" />
+                      </div>
+                      <div className="flex items-center gap-1.5 text-sm font-medium mb-1">
+                        <Images className="w-4 h-4 text-muted-foreground" />
+                        <span className="truncate">{gallery.name}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span>{gallery.assetCount} Assets</span>
+                        <span>{gallery.timeAgo}</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
-            )}
           </TabsContent>
 
           <TabsContent value="folders" className="flex-1 py-6 mt-0">

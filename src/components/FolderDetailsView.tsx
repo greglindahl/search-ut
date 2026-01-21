@@ -313,71 +313,73 @@ export function FolderDetailsView({ folderId, folder, onNavigate, isMobile = fal
           </div>
 
           {/* Assets Grid/Table with Loading State */}
-          {assetsViewMode === "list" ? (
-            <AssetTableView assets={filteredResults} isLoading={isLoading} />
-          ) : isLoading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {Array.from({ length: 10 }).map((_, i) => (
-                <div key={i} className="group">
-                  <Skeleton className="aspect-[4/3] rounded-lg mb-2" />
-                  <Skeleton className="h-4 w-3/4 mb-1" />
-                  <Skeleton className="h-3 w-1/2" />
-                </div>
-              ))}
-            </div>
-          ) : filteredResults.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <Image className="w-12 h-12 text-muted-foreground/30 mb-4" />
-              <h3 className="text-lg font-medium mb-1">No assets found</h3>
-              <p className="text-sm text-muted-foreground">Try adjusting your filters or search terms</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {filteredResults.map((asset) => (
-                <div key={asset.id} className="group cursor-pointer bg-card rounded-xl border shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                  {/* Thumbnail area */}
-                  <div className="aspect-[4/3] bg-muted/50 flex items-center justify-center relative">
-                    <AssetTypeIcon type={asset.type} className="w-10 h-10 text-muted-foreground/40" />
-                    {/* Metadata badges */}
-                    <div className="absolute bottom-2 right-2 flex items-center gap-1.5">
-                      {asset.aspectRatio && (
-                        <span className="text-[10px] font-medium text-muted-foreground bg-background/90 px-1.5 py-0.5 rounded">
-                          {asset.aspectRatio}
+          <div className="min-h-[400px]">
+            {assetsViewMode === "list" ? (
+              <AssetTableView assets={filteredResults} isLoading={isLoading} />
+            ) : isLoading ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <div key={i} className="group">
+                    <Skeleton className="aspect-[4/3] rounded-lg mb-2" />
+                    <Skeleton className="h-4 w-3/4 mb-1" />
+                    <Skeleton className="h-3 w-1/2" />
+                  </div>
+                ))}
+              </div>
+            ) : filteredResults.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <Image className="w-12 h-12 text-muted-foreground/30 mb-4" />
+                <h3 className="text-lg font-medium mb-1">No assets found</h3>
+                <p className="text-sm text-muted-foreground">Try adjusting your filters or search terms</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {filteredResults.map((asset) => (
+                  <div key={asset.id} className="group cursor-pointer bg-card rounded-xl border shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                    {/* Thumbnail area */}
+                    <div className="aspect-[4/3] bg-muted/50 flex items-center justify-center relative">
+                      <AssetTypeIcon type={asset.type} className="w-10 h-10 text-muted-foreground/40" />
+                      {/* Metadata badges */}
+                      <div className="absolute bottom-2 right-2 flex items-center gap-1.5">
+                        {asset.aspectRatio && (
+                          <span className="text-[10px] font-medium text-muted-foreground bg-background/90 px-1.5 py-0.5 rounded">
+                            {asset.aspectRatio}
+                          </span>
+                        )}
+                        <span className="text-[10px] font-medium text-muted-foreground bg-background/90 px-1.5 py-0.5 rounded uppercase">
+                          {asset.type}
+                        </span>
+                      </div>
+                      {asset.duration && (
+                        <span className="absolute bottom-2 left-2 text-[10px] font-medium text-muted-foreground bg-background/90 px-1.5 py-0.5 rounded">
+                          {asset.duration}
                         </span>
                       )}
-                      <span className="text-[10px] font-medium text-muted-foreground bg-background/90 px-1.5 py-0.5 rounded uppercase">
-                        {asset.type}
-                      </span>
                     </div>
-                    {asset.duration && (
-                      <span className="absolute bottom-2 left-2 text-[10px] font-medium text-muted-foreground bg-background/90 px-1.5 py-0.5 rounded">
-                        {asset.duration}
-                      </span>
-                    )}
-                  </div>
-                  {/* Card info */}
-                  <div className="p-3">
-                    <div className="font-medium text-sm truncate mb-1">{asset.name}</div>
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="min-w-0">
-                        <div className="text-[10px] uppercase tracking-wide text-muted-foreground truncate">
-                          {asset.creator}
-                        </div>
-                        {asset.tags.length > 0 && (
-                          <div className="text-xs text-primary truncate">
-                            {asset.tags[0]}
+                    {/* Card info */}
+                    <div className="p-3">
+                      <div className="font-medium text-sm truncate mb-1">{asset.name}</div>
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="text-[10px] uppercase tracking-wide text-muted-foreground truncate">
+                            {asset.creator}
                           </div>
-                        )}
+                          {asset.tags.length > 0 && (
+                            <div className="text-xs text-primary truncate">
+                              {asset.tags[0]}
+                            </div>
+                          )}
+                        </div>
+                        <span className="text-xs text-primary flex-shrink-0">
+                          {getRelativeTime(asset.dateCreated)}
+                        </span>
                       </div>
-                      <span className="text-xs text-primary flex-shrink-0">
-                        {getRelativeTime(asset.dateCreated)}
-                      </span>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </TabsContent>
 
         {/* Galleries Tab */}
