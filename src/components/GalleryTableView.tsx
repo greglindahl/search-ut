@@ -43,7 +43,20 @@ type SortDirection = "asc" | "desc";
 // Mock data generator for richer gallery info
 function enrichGallery(gallery: Gallery, index: number): GalleryTableItem {
   const creators = ["Sarah Mitchell", "David Chen", "Emma Rodriguez", "Marcus Thompson", "Olivia Park", "James Wilson", "Priya Sharma", "Lucas Adams"];
-  const descriptions = ["Test Description", "", "Lookbook collection", "", "Getty TEST", ""];
+  const descriptions = [
+    "Game night highlights and key plays",
+    "Practice session footage - team drills",
+    "Pregame warmup and player arrivals",
+    "Court-side fan reactions and crowd moments",
+    "Post-game interviews and locker room",
+    "Slam dunk compilation - best of season",
+    "Three-point shooting practice clips",
+    "Team huddle and timeout moments",
+    "Player close-ups and action shots",
+    "Arena atmosphere and halftime show",
+    "Championship celebration footage",
+    "Rookie spotlight and debut games",
+  ];
   
   const now = new Date();
   const daysAgo = (days: number) => {
