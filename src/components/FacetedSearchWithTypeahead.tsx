@@ -208,7 +208,7 @@ export function FacetedSearchWithTypeahead({ onSearch, onFacetCountsChange, asse
         results.push({
           type: "tag",
           value: tag,
-          label: tag,
+          label: `Tag: ${tag}`,
           icon: <Tag className="w-4 h-4 text-muted-foreground" />,
           count,
         });
