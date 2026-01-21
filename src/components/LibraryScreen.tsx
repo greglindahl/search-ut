@@ -668,7 +668,11 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {mockGalleries.map((gallery) => (
-                    <div key={gallery.id} className="group cursor-pointer border rounded-lg p-4 hover:border-primary/50 transition-colors">
+                    <div 
+                      key={gallery.id} 
+                      className="group cursor-pointer border rounded-lg p-4 hover:border-primary/50 transition-colors"
+                      onClick={() => setActiveFolder(gallery.id)}
+                    >
                       <div className="aspect-[4/3] border border-dashed rounded-lg bg-muted/30 flex items-center justify-center mb-3">
                         <div className="w-3/4 h-3/4 bg-muted/50 rounded" />
                       </div>
