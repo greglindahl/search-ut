@@ -7,6 +7,7 @@ import { FilterBar } from "@/components/FilterBar";
 import { GalleryDetailsView } from "@/components/GalleryDetailsView";
 import { FolderDetailsView } from "@/components/FolderDetailsView";
 import { AssetTableView } from "@/components/AssetTableView";
+import { GalleryTableView } from "@/components/GalleryTableView";
 import { useLibrarySearch } from "@/hooks/useLibrarySearch";
 import { getRelativeTime, LibraryAsset } from "@/lib/mockLibraryData";
 import { folders, mockGalleries, mockFolderCards, FolderItem, findFolderById, getAllDescendantIds } from "@/lib/mockFolderData";
@@ -56,8 +57,9 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
   const [isFolderSidebarExpanded, setIsFolderSidebarExpanded] = useState(false);
   const [activeFolder, setActiveFolder] = useState("all");
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
-  // View mode: 'grid' | 'list'
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  // View mode: 'grid' | 'list' for each tab
+  const [assetsViewMode, setAssetsViewMode] = useState<"grid" | "list">("grid");
+  const [galleriesViewMode, setGalleriesViewMode] = useState<"grid" | "list">("grid");
 
   // Auto-expand/collapse sidebar based on active tab
   useEffect(() => {
@@ -489,16 +491,16 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className={`h-8 w-8 rounded-r-none ${viewMode === "grid" ? "bg-accent" : ""}`}
-                    onClick={() => setViewMode("grid")}
+                    className={`h-8 w-8 rounded-r-none ${assetsViewMode === "grid" ? "bg-accent" : ""}`}
+                    onClick={() => setAssetsViewMode("grid")}
                   >
                     <Grid3X3 className="w-4 h-4" />
                   </Button>
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className={`h-8 w-8 rounded-none border-x ${viewMode === "list" ? "bg-accent" : ""}`}
-                    onClick={() => setViewMode("list")}
+                    className={`h-8 w-8 rounded-none border-x ${assetsViewMode === "list" ? "bg-accent" : ""}`}
+                    onClick={() => setAssetsViewMode("list")}
                   >
                     <List className="w-4 h-4" />
                   </Button>
@@ -511,7 +513,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
 
 
             {/* Assets Grid/Table with Loading State */}
-            {viewMode === "list" ? (
+            {assetsViewMode === "list" ? (
               <AssetTableView assets={filteredResults} isLoading={isLoading} />
             ) : isLoading ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -620,31 +622,48 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
               <div className="flex items-center gap-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                      Sort
-                      <ChevronDown className="w-4 h-4" />
+                    <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-card">
+                      40 per Page
+                      <ChevronDown className="w-3 h-3 opacity-50" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>Date (Newest)</DropdownMenuItem>
-                    <DropdownMenuItem>Date (Oldest)</DropdownMenuItem>
-                    <DropdownMenuItem>Name (A-Z)</DropdownMenuItem>
-                    <DropdownMenuItem>Name (Z-A)</DropdownMenuItem>
+                  <DropdownMenuContent className="bg-popover">
+                    <DropdownMenuItem>24 per Page</DropdownMenuItem>
+                    <DropdownMenuItem>40 per Page</DropdownMenuItem>
+                    <DropdownMenuItem>120 per Page</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                <div className="flex items-center border rounded-md">
-                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-r-none">
+                <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-card">
+                  <Settings2 className="w-3.5 h-3.5" />
+                  Manage Columns
+                </Button>
+
+                <div className="flex items-center border rounded-md bg-card">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className={`h-8 w-8 rounded-r-none ${galleriesViewMode === "grid" ? "bg-accent" : ""}`}
+                    onClick={() => setGalleriesViewMode("grid")}
+                  >
                     <Grid3X3 className="w-4 h-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-l-none">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className={`h-8 w-8 rounded-l-none ${galleriesViewMode === "list" ? "bg-accent" : ""}`}
+                    onClick={() => setGalleriesViewMode("list")}
+                  >
                     <List className="w-4 h-4" />
                   </Button>
                 </div>
               </div>
             </div>
 
-            {/* Galleries Grid */}
+            {/* Galleries Grid/Table */}
+            {galleriesViewMode === "list" ? (
+              <GalleryTableView galleries={mockGalleries} />
+            ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {mockGalleries.map((gallery) => (
                 <div key={gallery.id} className="group cursor-pointer border rounded-lg p-4 hover:border-primary/50 transition-colors">
@@ -662,6 +681,7 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
                 </div>
               ))}
             </div>
+            )}
           </TabsContent>
 
           <TabsContent value="folders" className="flex-1 py-6 mt-0">
