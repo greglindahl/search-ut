@@ -1,11 +1,12 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Folder, ChevronDown, Plus, Upload, Grid3X3, List, CheckSquare, Image, Images, FileText, Music, Video, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Folder, ChevronDown, Plus, Upload, Grid3X3, List, CheckSquare, Image, Images, FileText, Music, Video, Loader2, Settings2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { FacetedSearchWithTypeahead } from "@/components/FacetedSearchWithTypeahead";
 import { FilterBar } from "@/components/FilterBar";
 import { GalleryDetailsView } from "@/components/GalleryDetailsView";
 import { FolderDetailsView } from "@/components/FolderDetailsView";
+import { AssetTableView } from "@/components/AssetTableView";
 import { useLibrarySearch } from "@/hooks/useLibrarySearch";
 import { getRelativeTime, LibraryAsset } from "@/lib/mockLibraryData";
 import { folders, mockGalleries, mockFolderCards, FolderItem, findFolderById, getAllDescendantIds } from "@/lib/mockFolderData";
@@ -55,6 +56,8 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
   const [isFolderSidebarExpanded, setIsFolderSidebarExpanded] = useState(false);
   const [activeFolder, setActiveFolder] = useState("all");
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
+  // View mode: 'grid' | 'list'
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   // Auto-expand/collapse sidebar based on active tab
   useEffect(() => {
@@ -465,38 +468,38 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
               <div className="flex items-center gap-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-white">
+                    <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-card">
                       120 per Page
                       <ChevronDown className="w-3 h-3 opacity-50" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent>
+                  <DropdownMenuContent className="bg-popover">
                     <DropdownMenuItem>24 per Page</DropdownMenuItem>
                     <DropdownMenuItem>48 per Page</DropdownMenuItem>
                     <DropdownMenuItem>120 per Page</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-white">
-                      Sort
-                      <ChevronDown className="w-3 h-3 opacity-50" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>Date (Newest)</DropdownMenuItem>
-                    <DropdownMenuItem>Date (Oldest)</DropdownMenuItem>
-                    <DropdownMenuItem>Name (A-Z)</DropdownMenuItem>
-                    <DropdownMenuItem>Name (Z-A)</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2.5 text-xs font-medium bg-card">
+                  <Settings2 className="w-3.5 h-3.5" />
+                  Manage Columns
+                </Button>
 
-                <div className="flex items-center border rounded-md bg-white">
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-r-none">
+                <div className="flex items-center border rounded-md bg-card">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className={`h-8 w-8 rounded-r-none ${viewMode === "grid" ? "bg-accent" : ""}`}
+                    onClick={() => setViewMode("grid")}
+                  >
                     <Grid3X3 className="w-4 h-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-none border-x">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className={`h-8 w-8 rounded-none border-x ${viewMode === "list" ? "bg-accent" : ""}`}
+                    onClick={() => setViewMode("list")}
+                  >
                     <List className="w-4 h-4" />
                   </Button>
                   <Button variant="ghost" size="icon" className="h-8 w-8 rounded-l-none">
@@ -507,8 +510,10 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
             </div>
 
 
-            {/* Assets Grid with Loading State */}
-            {isLoading ? (
+            {/* Assets Grid/Table with Loading State */}
+            {viewMode === "list" ? (
+              <AssetTableView assets={filteredResults} isLoading={isLoading} />
+            ) : isLoading ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {Array.from({ length: 10 }).map((_, i) => (
                   <div key={i} className="group">
