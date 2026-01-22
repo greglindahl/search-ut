@@ -163,16 +163,17 @@ export function LibraryScreen({ isMobile = false }: LibraryScreenProps) {
         }
       }
 
-      // Folder dropdown filter (from FilterBar - simple year-based mapping)
+      // Folder dropdown filter (from FilterBar - uses folder IDs and descendants)
       if (folderFilter.length) {
-        const year = asset.dateCreated.getFullYear();
-        const matchesAny = folderFilter.some((f) => {
-          if (f === "season-2025") return year === 2025;
-          if (f === "season-2024") return year === 2024;
-          if (f === "archive") return year <= 2023;
-          return true;
+        // Collect all allowed folder IDs from selected folders and their descendants
+        const allowedFromDropdown = new Set<string>();
+        folderFilter.forEach((fId) => {
+          const folder = findFolderById(folders, fId);
+          if (folder) {
+            getAllDescendantIds(folder).forEach((id) => allowedFromDropdown.add(id));
+          }
         });
-        if (!matchesAny) return false;
+        if (!asset.folderId || !allowedFromDropdown.has(asset.folderId)) return false;
       }
 
       return true;
